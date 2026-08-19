@@ -42,15 +42,15 @@ COPY database ./database
 # package.json aponta db:migrate/db:seed para este wrapper (alinhado a NODE_ENV)
 COPY --chown=nodejs:nodejs scripts/sequelize-with-node-env.cjs scripts/sequelize-with-node-env.cjs
 
-# MEDIA_STORAGE=local grava aqui em runtime; precisa existir com dono nodejs
-# antes do USER trocar, senão o mkdir em runtime falha com EACCES.
 RUN mkdir -p /app/uploads && chown -R nodejs:nodejs /app/uploads
 
-USER nodejs
 EXPOSE 3000
 ENV PORT=3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-CMD ["node", "dist/server.js"]
+# Continua root no start: um volume montado em runtime (ex.: /app/uploads na
+# Railway) chega com dono root e sobrescreve o chown do build. Corrige a
+# permissão de novo aqui e só então derruba privilégio para nodejs.
+CMD ["sh", "-c", "chown -R nodejs:nodejs /app/uploads && exec su -s /bin/sh nodejs -c 'node dist/server.js'"]

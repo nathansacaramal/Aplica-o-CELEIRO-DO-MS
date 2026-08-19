@@ -1,7 +1,13 @@
 import type { ICity } from "@/entities/city/city.types";
 import type { IHotelSearchResult } from "@/entities/hotel/hotel.types";
+import { normalizeBffApiRootUrl } from "@/services/api/bffBaseUrlNormalize";
 import { searchHotelsByCity } from "@/services/hotels/hotelSearch.api";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+function resolveBffBaseUrl(): string {
+  const raw: string | undefined = import.meta.env.VITE_PUBLIC_BFF_BASE_URL;
+  return normalizeBffApiRootUrl(typeof raw === "string" ? raw.trim() : "");
+}
 
 export interface IUseHotelSearchResult {
   isLoading: boolean;
@@ -34,7 +40,7 @@ export function useHotelSearch(): IUseHotelSearchResult {
     setIsLoading(true);
     setError("");
 
-    searchHotelsByCity(city.name, city.state, controller.signal)
+    searchHotelsByCity(resolveBffBaseUrl(), city.name, city.state, controller.signal)
       .then((data) => {
         if (controller.signal.aborted) {
           return;

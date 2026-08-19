@@ -3,6 +3,7 @@ import { registerCityRoutes } from "@/modules/cities/presentation/http/routes/ci
 import { registerEventRoutes } from "@/modules/events/presentation/http/routes/events.routes";
 import { registerHomeContentRoutes } from "@/modules/home-content/presentation/http/routes/home-content.routes";
 import { registerHomeHighlightsRoutes } from "@/modules/home-highlights/presentation/http/routes/home-highlights.routes";
+import { registerHotelsRoutes } from "@/modules/hotels/presentation/http/routes/hotels.routes";
 import { registerInstitutionalContentRoutes } from "@/modules/institutional-content/presentation/http/routes/institutional-content.routes";
 import { registerMediaRoutes } from "@/modules/media/presentation/http/routes/media.routes";
 import { registerSocialLinkRoutes } from "@/modules/social-links/presentation/http/routes/social-link.routes";
@@ -30,4 +31,5 @@ export default function setupRoutes(app: Express): void {
 
   // PUBLIC
   registerHomeContentRoutes(router);
+  registerHotelsRoutes(router);
 }

@@ -1,114 +1,88 @@
+import { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { searchHotelsByCity } from "../hotelSearch.api";
 
-function jsonResponse(body: unknown, ok = true, status = 200): Response {
+const { mockGet } = vi.hoisted(() => {
+  const mockGet = vi.fn();
+  return { mockGet };
+});
+
+vi.mock("axios", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("axios")>();
   return {
-    ok,
-    status,
-    json: () => Promise.resolve(body),
-  } as Response;
-}
+    ...actual,
+    default: { ...actual.default, get: mockGet },
+  };
+});
+
+import { searchHotelsByCity } from "../hotelSearch.api";
 
 describe("searchHotelsByCity", () => {
   afterEach(() => {
-    vi.unstubAllGlobals();
+    mockGet.mockReset();
   });
 
-  it("geocodifica a cidade e mapeia hotéis retornados pelo Overpass", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(
-        jsonResponse([{ lat: "-22.22", lon: "-54.80" }]),
-      )
-      .mockResolvedValueOnce(
-        jsonResponse({
-          elements: [
+  it("chama o BFF com cidade e estado e retorna centro + hotéis", async () => {
+    mockGet.mockResolvedValueOnce({
+      data: {
+        data: {
+          center: { lat: -22.22, lon: -54.8 },
+          hotels: [
             {
-              type: "node",
-              id: 1,
-              lat: -22.221,
-              lon: -54.801,
-              tags: {
-                name: "Hotel Central",
-                "addr:street": "Rua A",
-                "addr:housenumber": "100",
-                phone: "6730000000",
-                stars: "4",
-              },
-            },
-            {
-              type: "way",
-              id: 2,
-              center: { lat: -22.223, lon: -54.803 },
-              tags: { name: "Pousada B" },
-            },
-            {
-              // sem coordenadas resolvíveis: deve ser descartado
-              type: "relation",
-              id: 3,
-              tags: { name: "Sem localização" },
+              id: "node/1",
+              name: "Hotel Central",
+              coordinates: { lat: -22.221, lon: -54.801 },
             },
           ],
-        }),
-      );
+        },
+      },
+    });
 
-    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchHotelsByCity(
+      "https://bff.test/api",
+      "Dourados",
+      "MS",
+    );
 
-    const result = await searchHotelsByCity("Dourados", "MS");
-
+    expect(mockGet).toHaveBeenCalledWith(
+      "https://bff.test/api/public/hotels",
+      expect.objectContaining({
+        params: { city: "Dourados", state: "MS" },
+      }),
+    );
     expect(result.center).toEqual({ lat: -22.22, lon: -54.8 });
-    expect(result.hotels).toHaveLength(2);
-
-    expect(result.hotels[0]).toMatchObject({
-      id: "node/1",
-      name: "Hotel Central",
-      address: "Rua A, 100",
-      phone: "6730000000",
-      rating: 4,
-      coordinates: { lat: -22.221, lon: -54.801 },
-    });
-
-    expect(result.hotels[1]).toMatchObject({
-      id: "way/2",
-      name: "Pousada B",
-      coordinates: { lat: -22.223, lon: -54.803 },
-    });
-    expect(result.hotels[1]?.address).toBeUndefined();
-    expect(result.hotels[1]?.rating).toBeUndefined();
+    expect(result.hotels).toHaveLength(1);
+    expect(result.hotels[0]?.name).toBe("Hotel Central");
   });
 
-  it("lança erro amigável quando a cidade não é encontrada no geocoder", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValueOnce(jsonResponse([])),
+  it("rejeita quando nenhuma URL de BFF está configurada", async () => {
+    await expect(searchHotelsByCity("", "Dourados", "MS")).rejects.toThrow(
+      /indisponível/i,
     );
-
-    await expect(searchHotelsByCity("Cidade Inexistente", "MS")).rejects.toThrow(
-      /não foi possível encontrar/i,
-    );
+    expect(mockGet).not.toHaveBeenCalled();
   });
 
-  it("lança erro amigável quando o geocoder falha (rede)", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockRejectedValueOnce(new TypeError("network error")),
+  it("lança erro amigável quando o BFF falha", async () => {
+    const error = new AxiosError(
+      "fail",
+      "ERR_BAD_RESPONSE",
+      {} as InternalAxiosRequestConfig,
+      undefined,
+      {
+        status: 502,
+        statusText: "Bad Gateway",
+        headers: {},
+        config: {} as InternalAxiosRequestConfig,
+        data: {
+          error: {
+            message: "Não foi possível buscar os hotéis. Tente novamente.",
+          },
+        },
+      },
     );
+    mockGet.mockRejectedValueOnce(error);
 
-    await expect(searchHotelsByCity("Dourados", "MS")).rejects.toThrow(
-      /não foi possível localizar/i,
-    );
-  });
-
-  it("lança erro amigável quando a busca de hotéis falha", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse([{ lat: "-22.22", lon: "-54.80" }]))
-      .mockResolvedValueOnce(jsonResponse({}, false, 500));
-
-    vi.stubGlobal("fetch", fetchMock);
-
-    await expect(searchHotelsByCity("Dourados", "MS")).rejects.toThrow(
-      /não foi possível buscar os hotéis/i,
-    );
+    await expect(
+      searchHotelsByCity("https://bff.test/api", "Dourados", "MS"),
+    ).rejects.toThrow(/não foi possível buscar os hotéis/i);
   });
 });

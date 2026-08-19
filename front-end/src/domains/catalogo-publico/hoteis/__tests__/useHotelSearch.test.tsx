@@ -53,6 +53,7 @@ describe("useHotelSearch", () => {
     });
     expect(result.current.error).toBe("");
     expect(searchHotelsByCityMock).toHaveBeenCalledWith(
+      expect.any(String),
       "Dourados",
       "MS",
       expect.any(AbortSignal),
