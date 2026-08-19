@@ -66,6 +66,15 @@ export function TopNav(): ReactElement {
           </NavLink>
 
           <NavLink
+            to="/hoteis"
+            className={({ isActive }: { isActive: boolean }) =>
+              `${linkBase} ${isActive ? linkActive : linkIdle}`
+            }
+          >
+            Hotéis
+          </NavLink>
+
+          <NavLink
             to="/sobre"
             className={({ isActive }: { isActive: boolean }) =>
               `${linkBase} ${isActive ? linkActive : linkIdle}`

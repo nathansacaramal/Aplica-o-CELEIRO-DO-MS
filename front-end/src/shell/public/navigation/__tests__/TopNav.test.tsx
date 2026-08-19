@@ -41,6 +41,11 @@ describe("TopNav", () => {
       "/cidades",
     );
 
+    expect(screen.getByRole("link", { name: "Hotéis" })).toHaveAttribute(
+      "href",
+      "/hoteis",
+    );
+
     expect(screen.getByRole("link", { name: "Sobre" })).toHaveAttribute(
       "href",
       "/sobre",

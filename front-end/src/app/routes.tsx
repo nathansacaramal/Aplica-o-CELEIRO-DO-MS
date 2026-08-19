@@ -25,6 +25,7 @@ import { EventoDetailsPage } from "@/domains/catalogo-publico/eventos/pages/Even
 import { PontosTuristicosPage } from "@/domains/catalogo-publico/pontos/pages/PontosTuristicosPage";
 import { PontoTuristicoDetailsPage } from "@/domains/catalogo-publico/pontos/pages/PontoTuristicoDetailsPage";
 import { CidadesPage } from "@/domains/cidades-institucional/pages/CidadesPage";
+import { HoteisPage } from "@/domains/catalogo-publico/hoteis/pages/HoteisPage";
 import { CityDetailsPage } from "@/domains/cidades-institucional/pages/CityDetailsPage";
 import { AboutPage } from "@/domains/institucional/pages/AboutPage";
 
@@ -47,6 +48,7 @@ export function AppRoutes(): ReactElement | null {
         },
         { path: "cidades", element: <CidadesPage /> },
         { path: "cidades/:slug", element: <CityDetailsPage /> },
+        { path: "hoteis", element: <HoteisPage /> },
         { path: "sobre", element: <AboutPage /> },
       ],
     },

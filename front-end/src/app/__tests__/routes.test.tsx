@@ -55,6 +55,10 @@ vi.mock("@/domains/cidades-institucional/pages/CidadesPage", () => ({
   CidadesPage: () => <div>Cidades list mock</div>,
 }));
 
+vi.mock("@/domains/catalogo-publico/hoteis/pages/HoteisPage", () => ({
+  HoteisPage: () => <div>Hoteis page mock</div>,
+}));
+
 vi.mock("@/domains/cidades-institucional/pages/CityDetailsPage", () => ({
   CityDetailsPage: () => <div>Cidade Details mock</div>,
 }));
@@ -247,6 +251,16 @@ describe("AppRoutes", () => {
     );
 
     expect(screen.getByText("Cidades list mock")).toBeInTheDocument();
+  });
+
+  it("deve renderizar a rota de hotéis", () => {
+    render(
+      <MemoryRouter initialEntries={["/hoteis"]}>
+        <AppRoutes />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("Hoteis page mock")).toBeInTheDocument();
   });
 
   it("deve renderizar a rota de detalhe de cidade", () => {
