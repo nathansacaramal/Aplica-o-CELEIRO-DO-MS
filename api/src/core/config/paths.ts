@@ -6,7 +6,9 @@ import fsp from "node:fs/promises";
 export const isProd = __dirname.includes(path.sep + "dist" + path.sep);
 
 export function resolveRuntimePath(relativeFromSrc: string) {
-  const fromDist = path.resolve(__dirname, "..", relativeFromSrc);
+  // Este arquivo compila para dist/core/config/paths.js — sobe 2 níveis (config, core)
+  // para chegar na raiz de dist/, não 1 (senão resolve para dist/core/<algo> em produção).
+  const fromDist = path.resolve(__dirname, "..", "..", relativeFromSrc);
   if (fs.existsSync(fromDist)) return fromDist;
 
   const fromSrc = path.resolve(process.cwd(), "src", relativeFromSrc);

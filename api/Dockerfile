@@ -42,6 +42,10 @@ COPY database ./database
 # package.json aponta db:migrate/db:seed para este wrapper (alinhado a NODE_ENV)
 COPY --chown=nodejs:nodejs scripts/sequelize-with-node-env.cjs scripts/sequelize-with-node-env.cjs
 
+# MEDIA_STORAGE=local grava aqui em runtime; precisa existir com dono nodejs
+# antes do USER trocar, senão o mkdir em runtime falha com EACCES.
+RUN mkdir -p /app/uploads && chown -R nodejs:nodejs /app/uploads
+
 USER nodejs
 EXPOSE 3000
 ENV PORT=3000

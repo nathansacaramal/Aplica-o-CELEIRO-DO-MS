@@ -44,3 +44,5 @@ vite.config.js
 crash.log
 override.tf
 override.tf.json
+.vercel
+.env*

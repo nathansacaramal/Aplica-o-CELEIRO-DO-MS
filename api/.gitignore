@@ -9,7 +9,8 @@ dist
 tsconfig.tsbuildinfo
 awscliv2.zip
 /aws
-/certs
+/certs/*
+!/certs/.gitkeep
 /uploads
 
 # Terraform (Fase 1 S3 — estado local)

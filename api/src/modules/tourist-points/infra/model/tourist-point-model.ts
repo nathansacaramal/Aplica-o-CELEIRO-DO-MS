@@ -1,5 +1,5 @@
 import sequelize from "@/core/database";
-import CityModel from "@/modules/cities/infra/models/city-model";
+import CityModel from "@/modules/cities/infra/model/city-model";
 import { DataTypes, Model } from "sequelize";
 import { TouristPointCategory } from "../../domain/value-objects/tourist-point-category";
 

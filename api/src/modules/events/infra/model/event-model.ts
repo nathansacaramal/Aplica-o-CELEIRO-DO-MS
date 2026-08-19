@@ -1,6 +1,6 @@
 // src/modules/events/infra/model/event-model.ts
 import sequelize from "@/core/database";
-import { CityModel } from "@/modules/cities/infra/models/city-model";
+import { CityModel } from "@/modules/cities/infra/model/city-model";
 import { DataTypes, Model } from "sequelize";
 
 class EventModel extends Model {

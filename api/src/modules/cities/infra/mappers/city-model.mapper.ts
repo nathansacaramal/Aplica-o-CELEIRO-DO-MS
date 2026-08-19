@@ -1,5 +1,5 @@
 import { CityEntity } from "../../domain/entities/city.entity";
-import { CityModel } from "../models/city-model";
+import { CityModel } from "../model/city-model";
 
 export function cityModelToEntity(m: CityModel): CityEntity {
   return new CityEntity({

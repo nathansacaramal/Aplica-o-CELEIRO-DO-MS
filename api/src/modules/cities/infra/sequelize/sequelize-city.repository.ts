@@ -11,7 +11,7 @@ import {
   PublicListCityRepository,
 } from "../../domain/repositories";
 import { cityModelToEntity } from "../mappers/city-model.mapper";
-import { CityModel } from "../models/city-model";
+import { CityModel } from "../model/city-model";
 
 export class SequelizeCityRepository
   implements
