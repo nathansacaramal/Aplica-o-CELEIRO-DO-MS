@@ -1,0 +1,21 @@
+---
+description: Padrões para APIs, contratos, integração e resiliência
+alwaysApply: true
+---
+
+Ao projetar APIs e integrações:
+- usar contratos explícitos
+- validar entrada na borda
+- separar DTOs de entidades de domínio quando necessário
+- padronizar respostas e erros
+- documentar payloads relevantes
+- considerar idempotência em operações críticas
+- definir timeouts para integrações externas
+- usar retry com critério, evitando amplificar falhas
+- considerar circuit breaker em integrações críticas
+- registrar correlação de requisições para troubleshooting
+
+Decisão síncrona vs assíncrona:
+- síncrona quando a resposta imediata for parte essencial da experiência
+- assíncrona quando houver desacoplamento, resiliência ou processamento em background
+- explicitar consistência eventual quando existir

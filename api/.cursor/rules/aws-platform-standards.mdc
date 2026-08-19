@@ -1,0 +1,39 @@
+---
+description: Padrões de SRE, DevOps e AWS para sistemas full cycle
+alwaysApply: true
+---
+
+Toda mudança relevante deve considerar impacto operacional.
+
+Ao lidar com produção, infraestrutura ou deploy, considerar sempre:
+- estratégia de deploy
+- rollback
+- observabilidade
+- logs, métricas e traces
+- health checks
+- escalabilidade
+- segurança de segredos
+- backups
+- recuperação de desastre
+- segregação por ambiente
+- custo operacional
+- least privilege
+
+Preferências padrão:
+- Terraform como padrão de IaC
+- ECS/Fargate como padrão para containers
+- Lambda para workloads pequenos, orientados a eventos ou automações específicas
+- EKS somente quando houver necessidade real de orquestração avançada
+- RDS/Aurora para dados relacionais
+- S3 para arquivos e objetos
+- SQS e EventBridge para integrações assíncronas simples
+- CloudWatch como baseline de observabilidade
+- Secrets Manager ou Parameter Store para segredos
+
+Toda recomendação deve incluir:
+1. arquitetura sugerida
+2. trade-offs
+3. riscos operacionais
+4. observabilidade mínima
+5. estratégia de rollback
+6. impacto de custo e complexidade

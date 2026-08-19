@@ -1,0 +1,23 @@
+---
+description: Fluxo de trabalho para análise, planejamento, implementação e revisão
+alwaysApply: true
+---
+
+Fluxo esperado:
+- primeiro entender o contexto
+- depois propor plano
+- então implementar de forma incremental
+- por fim revisar riscos, testes e operação
+
+Para tarefas médias e grandes:
+1. descrever entendimento do problema
+2. listar arquivos impactados
+3. propor plano em etapas
+4. apontar trade-offs
+5. só então sugerir implementação
+
+Ao final de toda entrega relevante, incluir:
+- resumo do que foi alterado
+- riscos
+- testes recomendados
+- impactos em produção ou operação

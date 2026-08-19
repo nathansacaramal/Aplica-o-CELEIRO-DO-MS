@@ -1,0 +1,134 @@
+tags:
+  - name: Events PUBLIC
+    description: Endpoints relacionados aos eventos da região
+
+paths:
+  /public/events:
+    get:
+      summary: Lista paginada de eventos (público)
+      tags:
+        - Events PUBLIC
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+        - in: query
+          name: name
+          schema: { type: string }
+        - in: query
+          name: category
+          description: Valores inválidos são ignorados no filtro
+          schema: { type: string }
+        - in: query
+          name: cityId
+          schema: { type: integer }
+        - in: query
+          name: sortBy
+          schema: { type: string, example: createdAt }
+        - in: query
+          name: sortDir
+          schema: { type: string, enum: [asc, desc], default: asc }
+      responses:
+        "200":
+          description: Coleção paginada (data = array de eventos)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicEventsCollectionResponse"
+        "400":
+          description: Query inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /public/events/{id}:
+    get:
+      summary: Busca evento por ID
+      tags:
+        - Events PUBLIC
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicEventResourceResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    EventHttpPayload:
+      type: object
+      properties:
+        id: { type: integer }
+        cityId: { type: integer }
+        citySlug: { type: string }
+        name: { type: string }
+        description: { type: string }
+        category: { type: string }
+        startDate: { type: string }
+        endDate: { type: string }
+        formattedDate: { type: string }
+        location: { type: string }
+        imageUrl: { type: string }
+        featured: { type: boolean }
+        published: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    EventsListMeta:
+      allOf:
+        - $ref: "#/components/schemas/Meta"
+      properties:
+        version: { type: string, example: "1.0.0" }
+        total: { type: integer }
+        totalPages: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+        sort:
+          type: object
+          properties:
+            by: { type: string }
+            dir: { type: string, enum: [asc, desc] }
+
+    PublicEventsCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventHttpPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/EventsListMeta"
+
+    PublicEventResourceResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/EventHttpPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"

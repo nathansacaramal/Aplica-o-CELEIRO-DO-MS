@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Evita hook em ambientes CI (builds que executam git commit, etc.)
+[ -n "$CI" ] && exit 0
+npx lint-staged

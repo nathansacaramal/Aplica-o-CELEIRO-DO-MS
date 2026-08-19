@@ -1,0 +1,81 @@
+tags:
+  - name: Institutional Content PUBLIC
+    description: Conteúdo institucional (público)
+
+paths:
+  /public/institutional-content:
+    get:
+      summary: Lista registros institucionais (sem paginação; data = array)
+      tags:
+        - Institutional Content PUBLIC
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionalContentCollectionResponse"
+
+  /public/institutional-content/{id}:
+    get:
+      summary: Busca por ID
+      tags:
+        - Institutional Content PUBLIC
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionalContentResourceResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    InstitutionalContentPayload:
+      type: object
+      properties:
+        id: { type: integer }
+        aboutTitle: { type: string }
+        aboutText: { type: string }
+        whoWeAreTitle: { type: string }
+        whoWeAreText: { type: string }
+        purposeTitle: { type: string }
+        purposeText: { type: string }
+        mission: { type: string }
+        vision: { type: string }
+        valuesJson: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    InstitutionalContentCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstitutionalContentPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    InstitutionalContentResourceResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/InstitutionalContentPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"

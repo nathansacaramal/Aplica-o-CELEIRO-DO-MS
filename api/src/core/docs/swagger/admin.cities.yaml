@@ -1,0 +1,218 @@
+tags:
+  - name: Cities ADMIN
+    description: Endpoints relacionados as cidades da região do catálogo de eventos
+
+paths:
+  /admin/cities:
+    get:
+      summary: Lista todas as cidades (admin)
+      tags:
+        - Cities ADMIN
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Coleção de cidades
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCityCollectionResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+    post:
+      summary: Cadastra uma cidade
+      tags:
+        - Cities ADMIN
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCityCreateRequest"
+      responses:
+        "201":
+          description: Cidade criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCityResourceResponse"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+  /admin/cities/{id}:
+    get:
+      summary: Busca cidade por ID
+      tags:
+        - Cities ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCityResourceResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    patch:
+      summary: Atualiza cidade
+      tags:
+        - Cities ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCityCreateRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCityResourceResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    delete:
+      summary: Exclui cidade
+      tags:
+        - Cities ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Removido (sem corpo; use header x-correlation-id)
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+components:
+  schemas:
+    AdminCityPayload:
+      type: object
+      description: Corpo de cidade na API (resposta)
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        state:
+          type: string
+        summary:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        published:
+          type: boolean
+      required:
+        [id, name, slug, state, summary, description, imageUrl, published]
+
+    AdminCityCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        state:
+          type: string
+        summary:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        published:
+          type: boolean
+      required: [name, slug, summary, imageUrl, published]
+
+    AdminCityCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminCityPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+    AdminCityResourceResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/AdminCityPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"

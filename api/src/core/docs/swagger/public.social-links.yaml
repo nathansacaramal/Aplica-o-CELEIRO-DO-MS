@@ -1,0 +1,78 @@
+tags:
+  - name: Social Link PUBLIC
+    description: Links de redes sociais (público)
+
+paths:
+  /public/social-links:
+    get:
+      summary: Lista todos os links sociais ativos/inativos conforme regra de negócio
+      tags:
+        - Social Link PUBLIC
+      responses:
+        "200":
+          description: Coleção sem paginação (data = array)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SocialLinksCollectionResponse"
+
+  /public/social-links/{id}:
+    get:
+      summary: Busca link social por ID
+      tags:
+        - Social Link PUBLIC
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SocialLinkResourceResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    SocialLinkPayload:
+      type: object
+      properties:
+        id: { type: integer }
+        platform: { type: string }
+        label: { type: string }
+        url: { type: string }
+        active: { type: boolean }
+        order: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    SocialLinksCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SocialLinkPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    SocialLinkResourceResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/SocialLinkPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"

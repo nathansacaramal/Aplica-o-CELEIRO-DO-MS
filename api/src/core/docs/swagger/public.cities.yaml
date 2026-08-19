@@ -1,0 +1,126 @@
+tags:
+  - name: Cities PUBLIC
+    description: Endpoints relacionados as cidades da região do catálogo de eventos
+
+paths:
+  /public/cities:
+    get:
+      summary: Lista cidades publicadas (ordenadas por nome)
+      tags:
+        - Cities PUBLIC
+      responses:
+        "200":
+          description: Coleção de cidades (apenas published=true)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicCitiesCollectionResponse"
+        "500":
+          description: Erro interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /public/cities/by-id/{id}:
+    get:
+      summary: Busca cidade publicada por ID
+      tags:
+        - Cities PUBLIC
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cidade encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicCityResourceResponse"
+        "404":
+          description: Cidade inexistente ou não publicada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /public/cities/{slug}:
+    get:
+      summary: Busca cidade publicada pelo slug
+      tags:
+        - Cities PUBLIC
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: Slug da cidade
+      responses:
+        "200":
+          description: Cidade encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicCityResourceResponse"
+        "404":
+          description: Cidade não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    PublicCity:
+      type: object
+      description: Payload público de cidade (sem timestamps)
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: Dourados
+        slug:
+          type: string
+          example: dourados
+        state:
+          type: string
+          example: MS
+        summary:
+          type: string
+        description:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+        published:
+          type: boolean
+      required: [id, name, slug, summary, imageUrl, published]
+
+    PublicCitiesCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicCity"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+    PublicCityResourceResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/PublicCity"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"

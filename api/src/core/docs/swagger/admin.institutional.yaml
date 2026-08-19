@@ -1,0 +1,221 @@
+tags:
+  - name: Institutional Content ADMIN
+    description: Conteúdo institucional (admin)
+
+paths:
+  /admin/institutional-content:
+    get:
+      summary: Lista registros (data = array)
+      tags:
+        - Institutional Content ADMIN
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionalContentCollectionResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    post:
+      summary: Cria registro
+      tags:
+        - Institutional Content ADMIN
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstitutionalContentWriteRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionalContentCreateResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+  /admin/institutional-content/{id}:
+    get:
+      summary: Busca por ID
+      tags:
+        - Institutional Content ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionalContentResourceResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    patch:
+      summary: Atualiza registro
+      tags:
+        - Institutional Content ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstitutionalContentWriteRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstitutionalContentUpdateResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    delete:
+      summary: Remove registro
+      tags:
+        - Institutional Content ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletedFlagResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+components:
+  schemas:
+    InstitutionalContentWriteRequest:
+      type: object
+      properties:
+        aboutTitle: { type: string }
+        aboutText: { type: string }
+        whoWeAreTitle: { type: string }
+        whoWeAreText: { type: string }
+        purposeTitle: { type: string }
+        purposeText: { type: string }
+        mission: { type: string }
+        vision: { type: string }
+        valuesJson: { type: string }
+
+    InstitutionalContentPayload:
+      type: object
+      properties:
+        id: { type: integer }
+        aboutTitle: { type: string }
+        aboutText: { type: string }
+        whoWeAreTitle: { type: string }
+        whoWeAreText: { type: string }
+        purposeTitle: { type: string }
+        purposeText: { type: string }
+        mission: { type: string }
+        vision: { type: string }
+        valuesJson: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    InstitutionalContentCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstitutionalContentPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    InstitutionalContentResourceResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/InstitutionalContentPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    InstitutionalContentCreateResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/InstitutionalContentPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    InstitutionalContentUpdateResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/InstitutionalContentPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          allOf:
+            - $ref: "#/components/schemas/Meta"
+          properties:
+            version: { type: string, example: "1.0.0" }

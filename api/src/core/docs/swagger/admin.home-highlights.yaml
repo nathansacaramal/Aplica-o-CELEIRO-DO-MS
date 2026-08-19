@@ -1,0 +1,211 @@
+tags:
+  - name: Home Highlight ADMIN
+    description: Destaques da home (admin)
+
+paths:
+  /admin/home-highlights:
+    get:
+      summary: Lista destaques (sem paginação)
+      tags:
+        - Home Highlight ADMIN
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeHighlightsCollectionResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    post:
+      summary: Cria destaque
+      tags:
+        - Home Highlight ADMIN
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HomeHighlightWriteRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeHighlightCreateResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+  /admin/home-highlights/{id}:
+    get:
+      summary: Busca destaque por ID
+      tags:
+        - Home Highlight ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeHighlightInlineResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    patch:
+      summary: Atualiza destaque
+      tags:
+        - Home Highlight ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HomeHighlightWriteRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeHighlightInlineResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+    delete:
+      summary: Remove destaque
+      tags:
+        - Home Highlight ADMIN
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletedFlagResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+components:
+  schemas:
+    HomeHighlightsCollectionResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/HomeHighlightPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    HomeHighlightPayload:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [event, tourist-point, custom] }
+        referenceId: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        imageUrl: { type: string }
+        cityName: { type: string }
+        ctaUrl: { type: string }
+        active: { type: boolean }
+        order: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    HomeHighlightWriteRequest:
+      type: object
+      properties:
+        type: { type: string, enum: [event, tourist-point, custom] }
+        referenceId: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        imageUrl: { type: string }
+        cityName: { type: string }
+        ctaUrl: { type: string }
+        active: { type: boolean }
+        order: { type: integer }
+
+    HomeHighlightCreateResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/HomeHighlightPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    HomeHighlightInlineResponse:
+      type: object
+      description: GET/PATCH retornam data + links + meta (envelope completo)
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/HomeHighlightPayload"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          allOf:
+            - $ref: "#/components/schemas/Meta"
+          properties:
+            version: { type: string, example: "1.0.0" }

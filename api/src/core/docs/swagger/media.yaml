@@ -1,0 +1,132 @@
+tags:
+  - name: Media
+    description: Upload e verificação de mídia
+
+paths:
+  /media/verify:
+    get:
+      tags: [Media]
+      summary: Verifica leitura (HEAD) de URL pública no storage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyMediaResponse"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /media:
+    post:
+      tags: [Media]
+      summary: Upload de mídia (base64)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadMediaInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadMediaResponse"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+
+components:
+  schemas:
+    UploadMediaFileInput:
+      type: object
+      required: [base64, filename, mimeType]
+      properties:
+        base64:
+          type: string
+        filename:
+          type: string
+        mimeType:
+          type: string
+
+    UploadMediaInput:
+      type: object
+      required: [file]
+      properties:
+        file:
+          $ref: "#/components/schemas/UploadMediaFileInput"
+        folder:
+          type: string
+        visibility:
+          type: string
+          enum: [private, public]
+
+    UploadMediaData:
+      type: object
+      properties:
+        filename: { type: string }
+        mimeType: { type: string }
+        size: { type: integer }
+        path: { type: string }
+        url: { type: string }
+
+    UploadMediaResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/UploadMediaData"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"
+
+    VerifyMediaData:
+      type: object
+      properties:
+        url: { type: string, format: uri }
+        contentType: { type: string }
+        contentLength: { type: integer }
+        readable: { type: boolean }
+
+    VerifyMediaResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/VerifyMediaData"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"

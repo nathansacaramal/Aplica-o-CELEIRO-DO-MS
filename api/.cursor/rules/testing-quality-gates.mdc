@@ -1,0 +1,28 @@
+---
+description: Padrões de testes, qualidade e critérios mínimos de aceite
+alwaysApply: true
+---
+
+Toda solução deve considerar verificabilidade.
+
+Diretrizes:
+- definir testes proporcionais ao risco da funcionalidade
+- priorizar testes unitários para lógica de domínio
+- usar testes de integração para fluxos importantes entre camadas
+- usar testes de contrato para integrações externas relevantes
+- validar cenários de erro e borda
+- evitar testes frágeis acoplados a detalhes internos sem necessidade
+
+Para mudanças relevantes, considerar:
+- casos felizes
+- casos inválidos
+- erros de infraestrutura e dependências
+- idempotência quando aplicável
+- consistência de contratos
+- regressão em fluxo crítico
+
+Antes de considerar pronto:
+- o comportamento esperado está claro?
+- existe forma objetiva de validar?
+- o erro falha de maneira compreensível?
+- a solução está observável?

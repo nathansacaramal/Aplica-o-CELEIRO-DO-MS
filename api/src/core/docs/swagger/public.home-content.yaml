@@ -1,0 +1,57 @@
+tags:
+  - name: Home Content PUBLIC
+    description: Agregador da landing (destaques)
+
+paths:
+  /public/home-content:
+    get:
+      summary: Destaques para a home pública
+      tags:
+        - Home Content PUBLIC
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicHomeLandingResponse"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    PublicHomeHighlight:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [event, tourist-point, custom] }
+        referenceId: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        cityName: { type: string }
+        imageUrl: { type: string }
+        ctaUrl: { type: string }
+        active: { type: boolean }
+        order: { type: integer }
+
+    PublicHomeLandingData:
+      type: object
+      required: [highlights]
+      properties:
+        highlights:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicHomeHighlight"
+
+    PublicHomeLandingResponse:
+      type: object
+      required: [data, links, meta]
+      properties:
+        data:
+          $ref: "#/components/schemas/PublicHomeLandingData"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/SimpleListMeta"

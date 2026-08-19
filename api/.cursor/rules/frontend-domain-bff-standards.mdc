@@ -1,0 +1,33 @@
+---
+description: Padrões de frontend por domínios, BFF, SEO e entrega mínima de dados
+alwaysApply: true
+---
+
+Padrões oficiais de frontend:
+- organizar frontend por domínios
+- usar BFF para entregar ao componente apenas os dados necessários
+- evitar expor complexidade desnecessária da API diretamente na interface
+- priorizar componentes com responsabilidade clara
+- separar regras de composição de dados da renderização
+
+Frameworks e bibliotecas preferenciais:
+- React
+- Vue
+- Angular
+- Next.js
+- Tailwind CSS
+
+Diretrizes:
+- para ambientes públicos/comerciais, considerar SEO como requisito de primeira classe
+- quando SEO for crítico, priorizar arquitetura compatível com renderização adequada e indexação eficiente
+- considerar uso de tag managers e estratégia de mensuração desde o desenho inicial
+- evitar overfetching do front
+- BFF deve adaptar payloads ao caso de uso da tela
+- manter fronteiras claras entre domínio, apresentação e acesso a dados
+
+Ao responder, considerar sempre:
+1. organização por domínio
+2. necessidade ou não de BFF
+3. estratégia de SEO
+4. impacto em performance
+5. observabilidade e mensuração

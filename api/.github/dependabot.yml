@@ -1,0 +1,20 @@
+# Dependabot: para JavaScript, o valor oficial é `package-ecosystem: npm` mesmo usando Yarn —
+# o bot atualiza o `yarn.lock` quando ele é a fonte de lockfile do repositório.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies

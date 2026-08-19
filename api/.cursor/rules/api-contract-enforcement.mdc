@@ -1,0 +1,42 @@
+---
+description: Regras obrigatórias de contrato HTTP, HATEOAS, Swagger e filtros de listagem
+alwaysApply: true
+---
+
+Este projeto adota as seguintes regras obrigatórias:
+
+- usar HATEOAS nas respostas quando aplicável
+- padronizar status codes:
+  - 201 para criado
+  - 200 para sucesso com conteúdo
+  - 204 para sucesso sem conteúdo
+  - 401 para credenciais inválidas
+  - 403 para recurso não autorizado
+  - 404 para rota ou recurso não encontrado
+
+Ao alterar qualquer endpoint:
+- atualizar obrigatoriamente a documentação Swagger
+- manter sincronia entre controller, DTO e Swagger
+- considerar a tarefa incompleta se a documentação não for atualizada
+
+Nas rotas de listagem:
+- aceitar filtros recebidos conforme padrão do projeto
+- transformar filtros em query de pesquisa
+- aceitar apenas propriedades existentes no DTO
+- não permitir filtros fora do contrato público
+
+Controllers:
+- não devem concentrar regra de negócio
+- não devem conter transformação complexa de filtros
+- devem delegar transformação e busca para camadas apropriadas
+
+Nas rotas de listagem:
+- aceitar filtros, paginação e ordenação via query params
+- transformar query params em query de pesquisa
+- aceitar apenas propriedades existentes no DTO/schema do recurso
+- rejeitar propriedades fora do contrato público
+- validar query params antes de chegar ao caso de uso
+
+Path params:
+- usar apenas para identificação de recurso, como id
+- não usar path params para filtros de listagem, paginação ou ordenação

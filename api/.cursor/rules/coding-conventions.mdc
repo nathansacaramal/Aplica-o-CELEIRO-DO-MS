@@ -1,0 +1,28 @@
+---
+description: Convenções de código, nomenclatura e legibilidade
+alwaysApply: true
+---
+
+Padrões de nomenclatura:
+- arquivos em kebab-case
+- funções e variáveis em camelCase
+- classes, types e interfaces em PascalCase
+- booleanos com prefixos is, has, can, should
+- nomes devem refletir intenção de negócio ou técnica com clareza
+- evitar nomes genéricos como data, info, service, handler, util sem contexto
+
+Padrões de código:
+- TypeScript com tipagem explícita
+- evitar any
+- priorizar interface quando representar contrato
+- usar utility types quando reduzirem redundância com clareza
+- uma função deve ter responsabilidade clara
+- evitar efeitos colaterais escondidos
+- tratar erros explicitamente
+- não ocultar regras de negócio em helpers genéricos
+
+Padrões de estrutura:
+- um arquivo deve representar uma responsabilidade principal
+- nomes de arquivos devem refletir o papel do conteúdo
+- manter proximidade entre arquivos relacionados
+- evitar diretórios genéricos cheios de utilitários sem domínio definido

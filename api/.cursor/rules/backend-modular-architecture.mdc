@@ -1,0 +1,42 @@
+---
+description: Padrões de arquitetura backend modularizada com core e contextos de negócio
+alwaysApply: true
+---
+
+Padrão arquitetural oficial do projeto:
+- arquitetura modularizada
+- existência de um core da aplicação
+- módulos separados por contextos de negócio
+- crescimento evolutivo
+- preparação para possível extração futura em microsserviços
+
+Princípios obrigatórios:
+- seguir SOLID rigorosamente
+- seguir TDD rigorosamente
+- seguir DDD quando fizer sentido para o domínio
+- priorizar alta coesão e baixo acoplamento
+- contratos explícitos entre camadas e módulos
+- evitar dependências cruzadas entre contextos
+- evitar lógica de negócio no framework
+- framework deve ser detalhe de infraestrutura
+
+Diretrizes de estrutura:
+- o core contém elementos transversais e infraestrutura compartilhada realmente necessária
+- os módulos devem representar contextos de negócio
+- cada módulo deve buscar autonomia interna
+- extração futura para microsserviço deve ser facilitada por fronteiras claras
+- não criar acoplamento indevido ao banco, framework ou transporte
+
+Diretrizes de implementação:
+- para aplicações web pequenas, usar Express
+- organizar controllers, casos de uso, contratos, entidades e repositórios com responsabilidade clara
+- toda regra de negócio relevante deve ser coberta por testes
+- preferir composição a herança, salvo justificativa clara
+- dependências devem apontar para abstrações sempre que possível
+
+Toda resposta deve considerar:
+1. fronteiras do contexto
+2. responsabilidades do core
+3. acoplamentos indevidos
+4. possibilidade de extração futura
+5. estratégia de testes

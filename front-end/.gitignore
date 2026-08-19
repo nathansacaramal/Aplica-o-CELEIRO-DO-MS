@@ -1,0 +1,46 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+coverage
+node_modules
+
+# Gestor de pacotes: Yarn apenas (yarn.lock). Não commitar lockfiles de npm/pnpm.
+package-lock.json
+pnpm-lock.yaml
+
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
+# Terraform
+**/.terraform/
+# Lock em infra/terraform/ deve ser versionado (reprodutibilidade / handover).
+*.tfstate
+*.tfstate.*
+*.tfvars
+!**/terraform.tfvars.example
+crash.log
+override.tf
+override.tf.json
