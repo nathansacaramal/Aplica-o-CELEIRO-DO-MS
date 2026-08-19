@@ -852,6 +852,22 @@ describe("createHttpAdminApiClient", () => {
       ).rejects.toThrow(/referenceId numérico/);
     });
 
+    it("createHomeHighlight exige ctaUrl", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+
+      await expect(
+        client.createHomeHighlight({
+          type: "event",
+          referenceId: "42",
+          title: "T",
+          description: "D",
+          imageUrl: "data:image/jpeg;base64,xx",
+          active: true,
+          order: 0,
+        }),
+      ).rejects.toThrow(/link do botão/);
+    });
+
     it("createHomeHighlight envia referenceId numérico e cityName mínimo", async () => {
       const client = createHttpAdminApiClient("https://bff.test/");
       mockHandles.post.mockResolvedValue({ data: resourceBody(highlightRow) });
@@ -863,6 +879,7 @@ describe("createHttpAdminApiClient", () => {
         description: "D",
         cityName: "RJ",
         imageUrl: "data:image/jpeg;base64,xx",
+        ctaUrl: "/eventos/42",
         active: true,
         order: 1,
       });

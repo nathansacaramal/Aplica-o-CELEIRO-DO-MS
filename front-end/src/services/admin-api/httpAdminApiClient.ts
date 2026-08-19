@@ -551,6 +551,9 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
           "referenceId numérico é obrigatório para criar destaque.",
         );
       }
+      if (!input.ctaUrl || input.ctaUrl.trim() === "") {
+        throw new Error("Informe o link do botão do destaque.");
+      }
       const image = await resolveWebImagePayloadFromImageUrlField(
         input.imageUrl,
         "Imagem do destaque",
@@ -565,7 +568,7 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
             ? input.cityName
             : "Cidade",
         image,
-        ctaUrl: input.ctaUrl ?? "https://example.com",
+        ctaUrl: input.ctaUrl,
         active: input.active,
         order: input.order,
       });

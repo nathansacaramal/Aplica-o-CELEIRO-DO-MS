@@ -115,6 +115,16 @@ export function AdminHomeHighlightsPage(): ReactElement {
         return;
       }
 
+      // O link do botão é derivado do evento/ponto turístico selecionado —
+      // nunca deixado em branco (isso já causou destaques com um link de
+      // exemplo/quebrado em produção).
+      const derivedCtaUrl: string =
+        formState.type === "event"
+          ? `/eventos/${refTrim}`
+          : formState.type === "tourist-point"
+            ? `/pontos-turisticos/${refTrim}`
+            : (formState.ctaUrl?.trim() ?? "");
+
       const input: ICreateHomeHighlightInput = {
         type: formState.type,
         referenceId: formState.referenceId?.trim() || undefined,
@@ -122,7 +132,7 @@ export function AdminHomeHighlightsPage(): ReactElement {
         description: formState.description.trim(),
         cityName: formState.cityName?.trim() || undefined,
         imageUrl: formState.imageUrl?.trim() || undefined,
-        ctaUrl: formState.ctaUrl?.trim() || undefined,
+        ctaUrl: derivedCtaUrl,
         active: formState.active,
         order: formState.order,
       };
@@ -302,21 +312,34 @@ export function AdminHomeHighlightsPage(): ReactElement {
             }}
           />
 
-          <div className="space-y-2">
-            <label
-              htmlFor="ctaUrl"
-              className="text-sm font-medium text-zinc-700"
-            >
-              Link do botão
-            </label>
-            <input
-              id="ctaUrl"
-              name="ctaUrl"
-              value={formState.ctaUrl ?? ""}
-              onChange={handleInputChange}
-              className="w-full rounded-xl border border-zinc-300 px-3 py-3 text-sm outline-none transition focus:border-[var(--color-primary)]"
-            />
-          </div>
+          {formState.type === "custom" ? (
+            <div className="space-y-2">
+              <label
+                htmlFor="ctaUrl"
+                className="text-sm font-medium text-zinc-700"
+              >
+                Link do botão
+              </label>
+              <input
+                id="ctaUrl"
+                name="ctaUrl"
+                value={formState.ctaUrl ?? ""}
+                onChange={handleInputChange}
+                className="w-full rounded-xl border border-zinc-300 px-3 py-3 text-sm outline-none transition focus:border-[var(--color-primary)]"
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <span className="text-sm font-medium text-zinc-700">
+                Link do botão
+              </span>
+              <p className="rounded-xl border border-dashed border-zinc-300 px-3 py-3 text-sm text-zinc-500">
+                Gerado automaticamente a partir do{" "}
+                {formState.type === "event" ? "evento" : "ponto turístico"}{" "}
+                selecionado acima.
+              </p>
+            </div>
+          )}
 
           <div className="space-y-2">
             <label

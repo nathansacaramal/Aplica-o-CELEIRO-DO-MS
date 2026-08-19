@@ -52,6 +52,19 @@ interface IHomeHeroCarouselBodyProps {
   items: IHomeHighlightItem[];
 }
 
+/**
+ * `navigate()` do react-router trata qualquer valor como caminho interno da
+ * SPA — um `ctaUrl` absoluto (ex.: "https://exemplo.com") vira "/https:/exemplo.com"
+ * em vez de sair do site. Detecta esse caso e usa navegação real do browser.
+ */
+function goToHref(navigate: ReturnType<typeof useNavigate>, href: string): void {
+  if (/^https?:\/\//i.test(href)) {
+    window.location.href = href;
+    return;
+  }
+  navigate(href);
+}
+
 function HomeHeroCarouselBody(props: IHomeHeroCarouselBodyProps): ReactElement {
   const { items } = props;
   const navigate = useNavigate();
@@ -154,7 +167,7 @@ function HomeHeroCarouselBody(props: IHomeHeroCarouselBodyProps): ReactElement {
           <div className="mt-5 flex flex-wrap gap-3">
             <Button
               variant="primary"
-              onClick={() => navigate(currentItem.href)}
+              onClick={() => goToHref(navigate, currentItem.href)}
             >
               Ver detalhes
             </Button>
