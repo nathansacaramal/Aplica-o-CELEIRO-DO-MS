@@ -33,14 +33,14 @@ export function MaintenanceModeCard({
           disabled={isSaving}
           onClick={() => onToggle(!enabled)}
           className={cn(
-            "relative h-8 w-14 shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+            "inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60",
             enabled ? "bg-red-500" : "bg-emerald-500",
           )}
         >
           <span
             className={cn(
-              "absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform",
-              enabled ? "translate-x-7" : "translate-x-1",
+              "inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",
+              enabled ? "translate-x-6" : "translate-x-1",
             )}
           />
         </button>
