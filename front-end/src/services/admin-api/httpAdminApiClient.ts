@@ -28,6 +28,7 @@ import type {
   IHomeHighlight,
   IUpdateHomeHighlightInput,
 } from "@/entities/home-content/homeContent.types";
+import type { ISiteSetting } from "@/entities/settings/settings.types";
 import type { IAdminApiClient, IAdminListPickQuery } from "./adminApi.types";
 import axios, {
   type AxiosInstance,
@@ -40,6 +41,7 @@ import { mapCityFromApi } from "@/services/api/mappers/cityFromApi";
 import { mapEventFromApi } from "@/services/api/mappers/eventFromApi";
 import { mapHomeHighlightFromApi } from "@/services/api/mappers/homeHighlightFromApi";
 import { mapInstitutionalFromApi } from "@/services/api/mappers/institutionalFromApi";
+import { mapSettingFromApi } from "@/services/api/mappers/settingFromApi";
 import { mapSocialLinkFromApi } from "@/services/api/mappers/socialLinkFromApi";
 import { mapTouristPointFromApi } from "@/services/api/mappers/touristPointFromApi";
 import {
@@ -603,6 +605,20 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
 
     async deleteHomeHighlight(id: number): Promise<void> {
       await http.delete(`/admin/home-highlights/${id}`);
+    },
+
+    async getSettings(): Promise<ISiteSetting[]> {
+      const { data } = await http.get<unknown>("/admin/settings");
+      const { items } = unwrapCollection<Record<string, unknown>>(data);
+      return items.map((row) => mapSettingFromApi(row));
+    },
+
+    async updateSetting(key: string, value: unknown): Promise<ISiteSetting> {
+      const { data } = await http.patch<unknown>(
+        `/admin/settings/${encodeURIComponent(key)}`,
+        { value },
+      );
+      return mapSettingFromApi(unwrapResource<Record<string, unknown>>(data));
     },
   };
 }

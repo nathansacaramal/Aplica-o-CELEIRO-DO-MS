@@ -10,11 +10,12 @@ import {
   AdminHomeHighlightsPageLazy,
   AdminInstitutionalPageLazy,
   AdminLoginPageLazy,
+  AdminSettingsPageLazy,
   AdminSocialLinksPageLazy,
   AdminTouristPointFormPageLazy,
   AdminTouristPointsListPageLazy,
 } from "@/app/adminLazyPages";
-import { PublicLayout } from "@/shell/public/layouts/PublicLayout";
+import { MaintenanceModeGate } from "@/shell/public/maintenance/MaintenanceModeGate";
 import { AdminAuthBoundary } from "@/shell/admin/AdminAuthBoundary";
 import { AdminAuthLayout } from "@/shell/admin/layouts/AdminAuthLayout";
 import { AdminLayout } from "@/shell/admin/layouts/AdminLayout";
@@ -36,7 +37,7 @@ export function AppRoutes(): ReactElement | null {
   return useRoutes([
     {
       path: "/",
-      element: <PublicLayout />,
+      element: <MaintenanceModeGate />,
       children: [
         { index: true, element: <HomePage /> },
         { path: "eventos", element: <EventosPage /> },
@@ -84,6 +85,10 @@ export function AppRoutes(): ReactElement | null {
                   element: <AdminSocialLinksPageLazy />,
                 },
                 {
+                  path: "configuracoes",
+                  element: <AdminSettingsPageLazy />,
+                },
+                {
                   path: "cidades",
                   element: <AdminCitiesListPageLazy />,
                 },
@@ -127,7 +132,7 @@ export function AppRoutes(): ReactElement | null {
     },
     {
       path: "*",
-      element: <PublicLayout />,
+      element: <MaintenanceModeGate />,
       children: [{ path: "*", element: <PublicNotFoundPage /> }],
     },
   ]);

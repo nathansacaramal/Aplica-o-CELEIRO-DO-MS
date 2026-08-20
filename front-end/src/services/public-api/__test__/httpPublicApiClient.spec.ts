@@ -707,4 +707,19 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
     expect(hi.touristPoints).toHaveLength(1);
     expect(hi.touristPoints[0]?.id).toBe(60);
   });
+
+  it("getMaintenanceMode retorna enabled a partir da API", async () => {
+    mockGet.mockResolvedValueOnce({ data: resourceBody({ enabled: true }) });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getMaintenanceMode()).toEqual({ enabled: true });
+    expect(mockGet).toHaveBeenCalledWith("/public/settings/maintenance-mode");
+  });
+
+  it("getMaintenanceMode nunca lança: retorna enabled: false quando a requisição falha", async () => {
+    mockGet.mockRejectedValueOnce(new Error("network down"));
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getMaintenanceMode()).toEqual({ enabled: false });
+  });
 });

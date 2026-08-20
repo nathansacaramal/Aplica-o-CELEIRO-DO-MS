@@ -82,6 +82,15 @@ export function AdminSidebar(): ReactElement {
         >
           Mídias sociais
         </NavLink>
+
+        <NavLink
+          to="/admin/configuracoes"
+          className={({ isActive }: { isActive: boolean }) =>
+            getLinkClassName(isActive)
+          }
+        >
+          Configurações
+        </NavLink>
       </nav>
     </aside>
   );

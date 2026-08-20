@@ -4,12 +4,14 @@ import type { IInstitutionalContent } from "@/entities/institutional/institution
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
+import type { IMaintenanceModeValue } from "@/entities/settings/settings.types";
 import {
   getCitiesMock,
   getEventsMock,
   getHomeHighlightsMock,
   getInstitutionalContentMock,
   getSocialLinksMock,
+  getSiteSettingsMock,
   getTouristPointsMock,
 } from "@/services/in-memory/mock-data";
 import type {
@@ -208,6 +210,14 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
       return {
         highlights: highlights.filter((item: IHomeHighlight) => item.active),
       };
+    },
+
+    async getMaintenanceMode(): Promise<IMaintenanceModeValue> {
+      const setting = getSiteSettingsMock().find(
+        (item) => item.key === "maintenance_mode",
+      );
+      const value = setting?.value as { enabled?: unknown } | undefined;
+      return { enabled: value?.enabled === true };
     },
   };
 }

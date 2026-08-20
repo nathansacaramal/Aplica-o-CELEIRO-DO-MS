@@ -31,6 +31,7 @@ import type {
   IHomeHighlight,
   IUpdateHomeHighlightInput,
 } from "@/entities/home-content/homeContent.types";
+import type { ISiteSetting } from "@/entities/settings/settings.types";
 
 /** Filtros para listagens admin usadas em combobox (nome + categoria na query do BFF). */
 export interface IAdminListPickQuery {
@@ -92,4 +93,9 @@ export interface IAdminApiClient {
     input: IUpdateHomeHighlightInput,
   ) => Promise<IHomeHighlight>;
   deleteHomeHighlight: (id: number) => Promise<void>;
+
+  /** Todas as configurações do sistema (chave/valor); usado pela tela Configurações. */
+  getSettings: () => Promise<ISiteSetting[]>;
+  /** Cria ou atualiza (upsert) uma configuração pela chave. */
+  updateSetting: (key: string, value: unknown) => Promise<ISiteSetting>;
 }

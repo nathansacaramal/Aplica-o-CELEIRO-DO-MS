@@ -4,6 +4,7 @@ import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types"
 import type { IInstitutionalContent } from "@/entities/institutional/institutional.types";
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
+import type { IMaintenanceModeValue } from "@/entities/settings/settings.types";
 
 export interface IPublicListParams {
   /** Filtro por slug da cidade (in-memory e BFF com `city` em pontos turísticos). */
@@ -56,4 +57,7 @@ export interface IPublicApiClient {
   listActiveSocialLinks: () => Promise<ISocialLink[]>;
   getHomeHighlights: () => Promise<IPublicHomeHighlightsResponse>;
   getHomeContent: () => Promise<IPublicHomeContentResponse>;
+
+  /** Nunca lança: em caso de falha, assume `enabled: false` (site público). */
+  getMaintenanceMode: () => Promise<IMaintenanceModeValue>;
 }

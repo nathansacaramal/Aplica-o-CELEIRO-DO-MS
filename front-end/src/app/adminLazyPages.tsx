@@ -65,3 +65,9 @@ export const AdminHomeHighlightsPageLazy = lazy(() =>
     (m) => ({ default: m.AdminHomeHighlightsPage }),
   ),
 );
+
+export const AdminSettingsPageLazy = lazy(() =>
+  import("@/domains/admin-cms/settings/pages/AdminSettingsPage").then((m) => ({
+    default: m.AdminSettingsPage,
+  })),
+);

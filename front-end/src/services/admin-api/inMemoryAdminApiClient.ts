@@ -25,7 +25,10 @@ import {
   getTouristPointsMock,
   getHomeHighlightsMock,
   setHomeHighlightsMock,
+  getSiteSettingsMock,
+  setSiteSettingsMock,
 } from "@/services/in-memory/mock-data";
+import type { ISiteSetting } from "@/entities/settings/settings.types";
 
 import type {
   ICity,
@@ -504,6 +507,39 @@ export function createInMemoryAdminApiClient(): IAdminApiClient {
       setHomeHighlightsMock(
         currentItems.filter((item: IHomeHighlight) => item.id !== id),
       );
+    },
+
+    async getSettings(): Promise<ISiteSetting[]> {
+      await adminMockDelay();
+      return getSiteSettingsMock();
+    },
+
+    async updateSetting(key: string, value: unknown): Promise<ISiteSetting> {
+      await adminMockDelay();
+
+      const currentItems: ISiteSetting[] = getSiteSettingsMock();
+      const currentItem: ISiteSetting | undefined = currentItems.find(
+        (item: ISiteSetting) => item.key === key,
+      );
+
+      const nextItem: ISiteSetting = currentItem
+        ? { ...currentItem, value, updatedAt: new Date().toISOString() }
+        : {
+            id: currentItems.length + 1,
+            key,
+            value,
+            updatedAt: new Date().toISOString(),
+          };
+
+      const nextItems: ISiteSetting[] = currentItem
+        ? currentItems.map((item: ISiteSetting) =>
+            item.key === key ? nextItem : item,
+          )
+        : [...currentItems, nextItem];
+
+      setSiteSettingsMock(nextItems);
+
+      return nextItem;
     },
   };
 }

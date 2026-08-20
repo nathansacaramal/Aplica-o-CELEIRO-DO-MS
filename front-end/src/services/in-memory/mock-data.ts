@@ -4,6 +4,7 @@ import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { IEvent } from "@/entities/event/event.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
+import type { ISiteSetting } from "@/entities/settings/settings.types";
 
 let institutionalContentMock: IInstitutionalContent = {
   id: 1,
@@ -384,4 +385,21 @@ export function getHomeHighlightsMock(): IHomeHighlight[] {
 
 export function setHomeHighlightsMock(nextValue: IHomeHighlight[]): void {
   homeHighlightsMock = [...nextValue];
+}
+
+let siteSettingsMock: ISiteSetting[] = [
+  {
+    id: 1,
+    key: "maintenance_mode",
+    value: { enabled: false },
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+export function getSiteSettingsMock(): ISiteSetting[] {
+  return [...siteSettingsMock];
+}
+
+export function setSiteSettingsMock(nextValue: ISiteSetting[]): void {
+  siteSettingsMock = [...nextValue];
 }

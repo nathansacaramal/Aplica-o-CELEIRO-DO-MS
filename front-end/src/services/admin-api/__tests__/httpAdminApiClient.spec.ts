@@ -921,4 +921,39 @@ describe("createHttpAdminApiClient", () => {
       expect(mockHandles.del).toHaveBeenCalledWith("/admin/home-highlights/4");
     });
   });
+
+  describe("settings", () => {
+    const settingRow: Record<string, unknown> = {
+      id: 1,
+      key: "maintenance_mode",
+      value: { enabled: false },
+      updatedAt: ISO,
+    };
+
+    it("getSettings mapeia coleção", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.get.mockResolvedValue({ data: collectionBody([settingRow]) });
+
+      const list = await client.getSettings();
+
+      expect(list).toHaveLength(1);
+      expect(list[0]?.key).toBe("maintenance_mode");
+      expect(list[0]?.value).toEqual({ enabled: false });
+      expect(mockHandles.get).toHaveBeenCalledWith("/admin/settings");
+    });
+
+    it("updateSetting envia PATCH com value no corpo e a chave codificada na URL", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.patch.mockResolvedValue({
+        data: resourceBody({ ...settingRow, value: { enabled: true } }),
+      });
+
+      const out = await client.updateSetting("maintenance_mode", { enabled: true });
+
+      expect(mockHandles.patch).toHaveBeenCalledWith("/admin/settings/maintenance_mode", {
+        value: { enabled: true },
+      });
+      expect(out.value).toEqual({ enabled: true });
+    });
+  });
 });

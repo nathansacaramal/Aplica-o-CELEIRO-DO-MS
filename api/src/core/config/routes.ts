@@ -6,6 +6,7 @@ import { registerHomeHighlightsRoutes } from "@/modules/home-highlights/presenta
 import { registerHotelsRoutes } from "@/modules/hotels/presentation/http/routes/hotels.routes";
 import { registerInstitutionalContentRoutes } from "@/modules/institutional-content/presentation/http/routes/institutional-content.routes";
 import { registerMediaRoutes } from "@/modules/media/presentation/http/routes/media.routes";
+import { registerSettingsRoutes } from "@/modules/settings/presentation/http/routes/settings.routes";
 import { registerSocialLinkRoutes } from "@/modules/social-links/presentation/http/routes/social-link.routes";
 import { registerTouristPointsRoutes } from "@/modules/tourist-points/presentation/http/routes/tourist-point.routes";
 import { registerUserRoutes } from "@/modules/users/presentation/http/routes/user.routes";
@@ -28,6 +29,7 @@ export default function setupRoutes(app: Express): void {
   registerSocialLinkRoutes(router);
   registerHomeHighlightsRoutes(router);
   registerInstitutionalContentRoutes(router);
+  registerSettingsRoutes(router);
 
   // PUBLIC
   registerHomeContentRoutes(router);

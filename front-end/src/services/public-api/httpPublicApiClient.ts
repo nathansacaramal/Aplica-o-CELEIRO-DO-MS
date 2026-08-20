@@ -7,6 +7,7 @@
 import type { ICity } from "@/entities/city/city.types";
 import type { IEvent } from "@/entities/event/event.types";
 import type { IInstitutionalContent } from "@/entities/institutional/institutional.types";
+import type { IMaintenanceModeValue } from "@/entities/settings/settings.types";
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import { mapCityFromApi } from "@/services/api/mappers/cityFromApi";
@@ -313,6 +314,19 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
         highlights: Array<Record<string, unknown>>;
       }>(data);
       return mapPublicHomeContentFromResource(payload);
+    },
+
+    async getMaintenanceMode(): Promise<IMaintenanceModeValue> {
+      try {
+        const { data } = await http.get<unknown>(
+          "/public/settings/maintenance-mode",
+        );
+        const raw = unwrapResource<{ enabled?: unknown }>(data);
+        return { enabled: raw.enabled === true };
+      } catch {
+        // Falha ao consultar a configuração nunca deve travar o site público.
+        return { enabled: false };
+      }
     },
   };
 
