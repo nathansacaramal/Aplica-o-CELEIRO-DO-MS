@@ -21,6 +21,7 @@ import {
 } from "@/constants/contentCategories";
 import { useAdminEventFormSource } from "@/domains/admin-cms/events/hooks/useAdminEventFormSource";
 import { buildFormattedDateRangePtBr } from "@/domains/admin-cms/events/utils/buildFormattedDateRangePtBr";
+import { imageUrlForUpdate } from "@/domains/admin-cms/utils/imageUrlForUpdate";
 import { toApiError } from "@/services/api/apiError";
 import {
   createAdminEvent,
@@ -165,8 +166,13 @@ export function AdminEventFormPage(): ReactElement {
       };
 
       if (name === "cityId") {
+        // O <select> sempre entrega string; sem essa conversão o cityId
+        // vai pro backend como texto e a API rejeita (schema espera number).
+        const numericCityId = Number(value);
+        nextState.cityId = numericCityId;
+
         const selectedCity: ICity | undefined = cities.find(
-          (city: ICity) => city.id === Number(value),
+          (city: ICity) => city.id === numericCityId,
         );
 
         nextState.citySlug = selectedCity?.slug ?? "";
@@ -217,7 +223,10 @@ export function AdminEventFormPage(): ReactElement {
           endDate: formState.endDate || undefined,
           formattedDate: formState.formattedDate.trim() || undefined,
           location: formState.location.trim() || undefined,
-          imageUrl: formState.imageUrl.trim() || undefined,
+          imageUrl: imageUrlForUpdate(
+            formState.imageUrl,
+            loadedEvent?.imageUrl ?? "",
+          ),
           featured: formState.featured,
           published: formState.published,
         };
@@ -461,6 +470,11 @@ export function AdminEventFormPage(): ReactElement {
             label="Imagem do evento"
             value={formState.imageUrl}
             disabled={isSubmitting}
+            helperText={
+              isEditMode
+                ? "Opcional: deixe como está para manter a imagem atual, ou envie um novo arquivo para substituí-la."
+                : undefined
+            }
             onChange={(next) => {
               setFormState((s) => ({ ...s, imageUrl: next }));
               if (successMessage) {

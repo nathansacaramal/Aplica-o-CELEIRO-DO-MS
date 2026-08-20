@@ -15,6 +15,7 @@ import type {
 } from "@/entities/city/city.types";
 import { AdminImageUrlField } from "@/domains/admin-cms/components/AdminImageUrlField";
 import { useAdminCityById } from "@/domains/admin-cms/cities/hooks/useAdminCityById";
+import { imageUrlForUpdate } from "@/domains/admin-cms/utils/imageUrlForUpdate";
 import { adminApiClient } from "@/services/admin-api/client";
 import { toApiError } from "@/services/api/apiError";
 
@@ -145,7 +146,10 @@ export function AdminCityFormPage(): ReactElement {
           state: formState.state.trim(),
           summary: formState.summary.trim(),
           description: formState.description.trim() || undefined,
-          imageUrl: formState.imageUrl.trim() || undefined,
+          // Só reenvia a imagem se o usuário realmente trocou; caso
+          // contrário mantém a imagem atual do registro (evita depender de
+          // baixar de volta uma imagem já publicada, que pode falhar por CORS).
+          imageUrl: imageUrlForUpdate(formState.imageUrl, city?.imageUrl ?? ""),
           published: formState.published,
         };
 
@@ -320,6 +324,11 @@ export function AdminCityFormPage(): ReactElement {
             label="Imagem da cidade"
             value={formState.imageUrl}
             disabled={isSubmitting}
+            helperText={
+              isEditMode
+                ? "Opcional: deixe como está para manter a imagem atual, ou envie um novo arquivo para substituí-la."
+                : undefined
+            }
             onChange={(next) => {
               setFormState((s) => ({ ...s, imageUrl: next }));
               if (successMessage) {

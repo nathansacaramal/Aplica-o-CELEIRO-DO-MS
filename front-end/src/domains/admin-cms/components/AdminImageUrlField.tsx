@@ -18,6 +18,8 @@ export interface IAdminImageUrlFieldProps {
   disabled?: boolean;
   /** Tamanho máximo do arquivo local (padrão 5 MB). */
   maxBytes?: number;
+  /** Sobrepõe o texto de ajuda abaixo do rótulo (ex.: avisar que é opcional na edição). */
+  helperText?: string;
 }
 
 function canPreview(value: string): boolean {
@@ -42,6 +44,7 @@ export function AdminImageUrlField(
     onChange,
     disabled = false,
     maxBytes = DEFAULT_MAX_BYTES,
+    helperText = "Envie um arquivo do seu computador ou cole o link (https) de uma imagem já publicada na internet.",
   } = props;
 
   const reactId = useId();
@@ -102,10 +105,7 @@ export function AdminImageUrlField(
     <div className="space-y-3 md:col-span-2">
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium text-zinc-700">{label}</span>
-        <p className="text-xs text-zinc-500">
-          Envie um arquivo do seu computador ou cole o link (https) de uma
-          imagem já publicada na internet.
-        </p>
+        <p className="text-xs text-zinc-500">{helperText}</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

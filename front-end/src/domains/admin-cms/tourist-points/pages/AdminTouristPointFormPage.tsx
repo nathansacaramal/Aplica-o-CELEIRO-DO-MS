@@ -20,6 +20,7 @@ import {
   TOURIST_POINT_CATEGORY_VALUES,
 } from "@/constants/contentCategories";
 import { useAdminTouristPointFormSource } from "@/domains/admin-cms/tourist-points/hooks/useAdminTouristPointFormSource";
+import { imageUrlForUpdate } from "@/domains/admin-cms/utils/imageUrlForUpdate";
 import {
   finalizeHHmmString,
   maskHHmmInput,
@@ -149,8 +150,13 @@ export function AdminTouristPointFormPage(): ReactElement {
       };
 
       if (name === "cityId") {
+        // O <select> sempre entrega string; sem essa conversão o cityId
+        // vai pro backend como texto e a API rejeita (schema espera number).
+        const numericCityId = Number(value);
+        nextState.cityId = numericCityId;
+
         const selectedCity: ICity | undefined = cities.find(
-          (city: ICity) => city.id === Number(value),
+          (city: ICity) => city.id === numericCityId,
         );
 
         nextState.citySlug = selectedCity?.slug ?? "";
@@ -207,7 +213,10 @@ export function AdminTouristPointFormPage(): ReactElement {
           category: formState.category.trim() || undefined,
           address: formState.address.trim() || undefined,
           openingHours: openingHoursToApi(formState.openingHours),
-          imageUrl: formState.imageUrl.trim() || undefined,
+          imageUrl: imageUrlForUpdate(
+            formState.imageUrl,
+            loadedTouristPoint?.imageUrl ?? "",
+          ),
           featured: formState.featured,
           published: formState.published,
         };
@@ -424,6 +433,11 @@ export function AdminTouristPointFormPage(): ReactElement {
             label="Imagem do ponto turístico"
             value={formState.imageUrl}
             disabled={isSubmitting}
+            helperText={
+              isEditMode
+                ? "Opcional: deixe como está para manter a imagem atual, ou envie um novo arquivo para substituí-la."
+                : undefined
+            }
             onChange={(next) => {
               setFormState((s) => ({ ...s, imageUrl: next }));
               if (successMessage) {

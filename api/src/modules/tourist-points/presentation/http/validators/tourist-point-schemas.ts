@@ -5,17 +5,10 @@ import { z } from "zod";
 
 export const createTouristPointSchema = z.object({
   id: z.number().optional(),
-  cityId: z.number({
-    error: (issue) => {
-      if (issue.code === "invalid_type" && issue.expected === "number") {
-        return { message: "Selecione uma cidade válida" };
-      }
-      if (issue.code === "invalid_type" && issue.expected === "undefined") {
-        return { message: "Selecione uma cidade" };
-      }
-      return { message: "A cidade selecionada é inválida" };
-    },
-  }),
+  // z.coerce (não z.number puro): o formulário admin envia o id da cidade
+  // como string em alguns fluxos do <select>; aceitar e converter aqui evita
+  // rejeitar um cityId numericamente válido só por vir como texto.
+  cityId: z.coerce.number().int().positive("Selecione uma cidade"),
   citySlug: z.string(),
   name: z
     .string({
@@ -59,19 +52,7 @@ export const createTouristPointSchema = z.object({
 });
 
 export const updateTouristPointSchema = z.object({
-  cityId: z
-    .number({
-      error: (issue) => {
-        if (issue.code === "invalid_type" && issue.expected === "number") {
-          return { message: "Selecione uma cidade válida" };
-        }
-        if (issue.code === "invalid_type" && issue.expected === "undefined") {
-          return { message: "Selecione uma cidade" };
-        }
-        return { message: "A cidade selecionada é inválida" };
-      },
-    })
-    .optional(),
+  cityId: z.coerce.number().int().positive("Selecione uma cidade").optional(),
   citySlug: z.string().optional(),
   name: z
     .string({
