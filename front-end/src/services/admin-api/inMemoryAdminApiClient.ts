@@ -541,5 +541,34 @@ export function createInMemoryAdminApiClient(): IAdminApiClient {
 
       return nextItem;
     },
+
+    async updateSiteLogo(imageUrlFieldValue: string): Promise<ISiteSetting> {
+      await adminMockDelay();
+
+      const currentItems: ISiteSetting[] = getSiteSettingsMock();
+      const currentItem: ISiteSetting | undefined = currentItems.find(
+        (item: ISiteSetting) => item.key === "site_logo",
+      );
+      const value = { url: imageUrlFieldValue.trim() };
+
+      const nextItem: ISiteSetting = currentItem
+        ? { ...currentItem, value, updatedAt: new Date().toISOString() }
+        : {
+            id: currentItems.length + 1,
+            key: "site_logo",
+            value,
+            updatedAt: new Date().toISOString(),
+          };
+
+      const nextItems: ISiteSetting[] = currentItem
+        ? currentItems.map((item: ISiteSetting) =>
+            item.key === "site_logo" ? nextItem : item,
+          )
+        : [...currentItems, nextItem];
+
+      setSiteSettingsMock(nextItems);
+
+      return nextItem;
+    },
   };
 }

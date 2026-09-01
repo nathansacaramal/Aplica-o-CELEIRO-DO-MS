@@ -4,7 +4,11 @@ import type { IInstitutionalContent } from "@/entities/institutional/institution
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
-import type { IMaintenanceModeValue } from "@/entities/settings/settings.types";
+import {
+  DEFAULT_SITE_LOGO_URL,
+  type IMaintenanceModeValue,
+  type ISiteLogoValue,
+} from "@/entities/settings/settings.types";
 import {
   getCitiesMock,
   getEventsMock,
@@ -245,6 +249,18 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
       );
       const value = setting?.value as { enabled?: unknown } | undefined;
       return { enabled: value?.enabled === true };
+    },
+
+    async getSiteLogo(): Promise<ISiteLogoValue> {
+      const setting = getSiteSettingsMock().find(
+        (item) => item.key === "site_logo",
+      );
+      const value = setting?.value as { url?: unknown } | undefined;
+      const url =
+        typeof value?.url === "string" && value.url.trim() !== ""
+          ? value.url
+          : DEFAULT_SITE_LOGO_URL;
+      return { url };
     },
   };
 }

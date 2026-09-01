@@ -1,17 +1,30 @@
 import { useState, type ReactElement } from "react";
 import { Button, Card, SectionHeader } from "@/design-system/ui";
-import type { ISiteSetting } from "@/entities/settings/settings.types";
+import {
+  DEFAULT_SITE_LOGO_URL,
+  type ISiteSetting,
+} from "@/entities/settings/settings.types";
 import { MaintenanceModeCard } from "@/domains/admin-cms/settings/components/MaintenanceModeCard";
+import { SiteLogoCard } from "@/domains/admin-cms/settings/components/SiteLogoCard";
 import { useAdminSettings } from "@/domains/admin-cms/settings/hooks/useAdminSettings";
 import { adminApiClient } from "@/services/admin-api/client";
 import { toApiError } from "@/services/api/apiError";
 
 const MAINTENANCE_MODE_KEY = "maintenance_mode";
+const SITE_LOGO_KEY = "site_logo";
 
 function isMaintenanceModeEnabled(settings: ISiteSetting[]): boolean {
   const setting = settings.find((item) => item.key === MAINTENANCE_MODE_KEY);
   const value = setting?.value as { enabled?: unknown } | undefined;
   return value?.enabled === true;
+}
+
+function getSiteLogoUrl(settings: ISiteSetting[]): string {
+  const setting = settings.find((item) => item.key === SITE_LOGO_KEY);
+  const value = setting?.value as { url?: unknown } | undefined;
+  return typeof value?.url === "string" && value.url.trim() !== ""
+    ? value.url
+    : DEFAULT_SITE_LOGO_URL;
 }
 
 export function AdminSettingsPage(): ReactElement {
@@ -23,6 +36,7 @@ export function AdminSettingsPage(): ReactElement {
   const [successMessage, setSuccessMessage] = useState<string>("");
 
   const maintenanceModeEnabled: boolean = isMaintenanceModeEnabled(settings);
+  const siteLogoUrl: string = getSiteLogoUrl(settings);
 
   async function handleToggleMaintenanceMode(next: boolean): Promise<void> {
     try {
@@ -52,6 +66,31 @@ export function AdminSettingsPage(): ReactElement {
       setError(
         toApiError(caught, "Não foi possível salvar a configuração.").message,
       );
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleSaveSiteLogo(nextImageUrl: string): Promise<void> {
+    try {
+      setIsSaving(true);
+      setError("");
+      setSuccessMessage("");
+
+      const updated: ISiteSetting =
+        await adminApiClient.updateSiteLogo(nextImageUrl);
+
+      setSettings(
+        settings.some((item) => item.key === SITE_LOGO_KEY)
+          ? settings.map((item) =>
+              item.key === SITE_LOGO_KEY ? updated : item,
+            )
+          : [...settings, updated],
+      );
+
+      setSuccessMessage("Logo atualizada com sucesso.");
+    } catch (caught) {
+      setError(toApiError(caught, "Não foi possível salvar a logo.").message);
     } finally {
       setIsSaving(false);
     }
@@ -116,6 +155,12 @@ export function AdminSettingsPage(): ReactElement {
 
       {/* Novas configurações entram aqui como Cards independentes, sem
           precisar alterar a estrutura desta página. */}
+      <SiteLogoCard
+        currentUrl={siteLogoUrl}
+        isSaving={isSaving}
+        onSave={(next) => void handleSaveSiteLogo(next)}
+      />
+
       <MaintenanceModeCard
         enabled={maintenanceModeEnabled}
         isSaving={isSaving}

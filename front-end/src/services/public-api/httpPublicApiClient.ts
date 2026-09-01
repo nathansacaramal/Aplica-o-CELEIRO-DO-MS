@@ -7,7 +7,11 @@
 import type { ICity } from "@/entities/city/city.types";
 import type { IEvent } from "@/entities/event/event.types";
 import type { IInstitutionalContent } from "@/entities/institutional/institutional.types";
-import type { IMaintenanceModeValue } from "@/entities/settings/settings.types";
+import {
+  DEFAULT_SITE_LOGO_URL,
+  type IMaintenanceModeValue,
+  type ISiteLogoValue,
+} from "@/entities/settings/settings.types";
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import { mapCityFromApi } from "@/services/api/mappers/cityFromApi";
@@ -366,6 +370,18 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
       } catch {
         // Falha ao consultar a configuração nunca deve travar o site público.
         return { enabled: false };
+      }
+    },
+
+    async getSiteLogo(): Promise<ISiteLogoValue> {
+      try {
+        const { data } = await http.get<unknown>("/public/settings/logo");
+        const raw = unwrapResource<{ url?: unknown }>(data);
+        const url = typeof raw.url === "string" && raw.url.trim() !== "" ? raw.url : DEFAULT_SITE_LOGO_URL;
+        return { url };
+      } catch {
+        // Falha ao consultar a configuração nunca deve deixar o site sem logo.
+        return { url: DEFAULT_SITE_LOGO_URL };
       }
     },
   };

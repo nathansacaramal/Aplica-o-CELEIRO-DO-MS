@@ -398,6 +398,12 @@ let siteSettingsMock: ISiteSetting[] = [
     value: { enabled: false },
     updatedAt: new Date().toISOString(),
   },
+  {
+    id: 2,
+    key: "site_logo",
+    value: { url: "/celeiro_ms_logo.jpg" },
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 export function getSiteSettingsMock(): ISiteSetting[] {

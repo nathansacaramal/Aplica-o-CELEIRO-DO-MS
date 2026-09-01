@@ -9,3 +9,10 @@ export interface ISiteSetting {
 export interface IMaintenanceModeValue {
   enabled: boolean;
 }
+
+export interface ISiteLogoValue {
+  url: string;
+}
+
+/** Logo estática atual do site (public/celeiro_ms_logo.jpg), usada como fallback. */
+export const DEFAULT_SITE_LOGO_URL = "/celeiro_ms_logo.jpg";

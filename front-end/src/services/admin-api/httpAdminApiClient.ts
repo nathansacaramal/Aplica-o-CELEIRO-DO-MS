@@ -622,5 +622,16 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
       );
       return mapSettingFromApi(unwrapResource<Record<string, unknown>>(data));
     },
+
+    async updateSiteLogo(imageUrlFieldValue: string): Promise<ISiteSetting> {
+      const image = await resolveWebImagePayloadFromImageUrlField(
+        imageUrlFieldValue,
+        "Logo do site",
+      );
+      const { data } = await http.patch<unknown>("/admin/settings/logo", {
+        image,
+      });
+      return mapSettingFromApi(unwrapResource<Record<string, unknown>>(data));
+    },
   };
 }

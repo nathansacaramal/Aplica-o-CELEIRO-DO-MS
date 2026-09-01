@@ -788,4 +788,34 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
     const client = createHttpPublicApiClient("https://x/api");
     expect(await client.getMaintenanceMode()).toEqual({ enabled: false });
   });
+
+  it("getSiteLogo retorna a url a partir da API", async () => {
+    mockGet.mockResolvedValueOnce({
+      data: resourceBody({ url: "https://cdn.example/logo.png" }),
+    });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getSiteLogo()).toEqual({
+      url: "https://cdn.example/logo.png",
+    });
+    expect(mockGet).toHaveBeenCalledWith("/public/settings/logo");
+  });
+
+  it("getSiteLogo nunca lança: cai na logo estática quando a requisição falha", async () => {
+    mockGet.mockRejectedValueOnce(new Error("network down"));
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getSiteLogo()).toEqual({
+      url: "/celeiro_ms_logo.jpg",
+    });
+  });
+
+  it("getSiteLogo cai na logo estática quando a resposta vem malformada", async () => {
+    mockGet.mockResolvedValueOnce({ data: resourceBody({ url: 123 }) });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getSiteLogo()).toEqual({
+      url: "/celeiro_ms_logo.jpg",
+    });
+  });
 });

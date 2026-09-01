@@ -31,3 +31,10 @@ export const publicMaintenanceModeLinks = (): Links => ({
     method: "GET",
   },
 });
+
+export const publicSiteLogoLinks = (): Links => ({
+  self: {
+    href: `${API_PUBLIC_PREFIX}/settings/logo`,
+    method: "GET",
+  },
+});

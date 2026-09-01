@@ -957,5 +957,26 @@ describe("createHttpAdminApiClient", () => {
       });
       expect(out.value).toEqual({ enabled: true });
     });
+
+    it("updateSiteLogo resolve a imagem e envia PATCH em /admin/settings/logo", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.patch.mockResolvedValue({
+        data: resourceBody({
+          id: 2,
+          key: "site_logo",
+          value: { url: "https://cdn.example/logo.png" },
+          updatedAt: ISO,
+        }),
+      });
+
+      const out = await client.updateSiteLogo("data:image/jpeg;base64,xx");
+
+      expect(mockHandles.patch).toHaveBeenCalledWith(
+        "/admin/settings/logo",
+        expect.objectContaining({ image: expect.any(Object) }),
+      );
+      expect(out.key).toBe("site_logo");
+      expect(out.value).toEqual({ url: "https://cdn.example/logo.png" });
+    });
   });
 });

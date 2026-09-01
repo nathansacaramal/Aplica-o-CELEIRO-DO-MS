@@ -1,10 +1,13 @@
 import type { ReactElement } from "react";
+import { useSiteLogo } from "@/domains/public-portal/settings/hooks/useSiteLogo";
 
 export function MaintenancePage(): ReactElement {
+  const { url: logoUrl } = useSiteLogo();
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center text-zinc-900">
       <img
-        src="/celeiro_ms_logo.jpg"
+        src={logoUrl}
         alt="Celeiro do MS"
         className="mb-6 h-16 w-16 rounded-full object-cover"
       />

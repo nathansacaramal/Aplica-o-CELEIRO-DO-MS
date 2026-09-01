@@ -1,7 +1,9 @@
 import type { ReactElement } from "react";
 import { NavLink } from "react-router-dom";
+import { useSiteLogo } from "@/domains/public-portal/settings/hooks/useSiteLogo";
 
 export function TopNav(): ReactElement {
+  const { url: logoUrl } = useSiteLogo();
   const linkBase: string =
     "rounded-xl px-3 py-2 text-sm font-medium transition";
   const linkActive: string = "bg-black/5 text-zinc-900";
@@ -13,7 +15,7 @@ export function TopNav(): ReactElement {
         <NavLink to="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:rgba(0,152,201,0.12)]">
             <img
-              src="/celeiro_ms_logo.jpg"
+              src={logoUrl}
               alt="Logo do Celeiro do MS"
               className="h-8 w-8 rounded-full object-cover"
             />

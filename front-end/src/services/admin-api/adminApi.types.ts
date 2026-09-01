@@ -98,4 +98,6 @@ export interface IAdminApiClient {
   getSettings: () => Promise<ISiteSetting[]>;
   /** Cria ou atualiza (upsert) uma configuração pela chave. */
   updateSetting: (key: string, value: unknown) => Promise<ISiteSetting>;
+  /** Substitui a logo do site a partir do campo de imagem (data URL ou link http(s)). */
+  updateSiteLogo: (imageUrlFieldValue: string) => Promise<ISiteSetting>;
 }
