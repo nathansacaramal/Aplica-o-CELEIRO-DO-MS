@@ -97,7 +97,7 @@ export function AppRoutes(): ReactElement | null {
                   element: <AdminCityFormPageLazy />,
                 },
                 {
-                  path: "cidades/:id/editar",
+                  path: "cidades/editar",
                   element: <AdminCityFormPageLazy />,
                 },
                 {
@@ -109,7 +109,7 @@ export function AppRoutes(): ReactElement | null {
                   element: <AdminEventFormPageLazy />,
                 },
                 {
-                  path: "eventos/:id/editar",
+                  path: "eventos/editar",
                   element: <AdminEventFormPageLazy />,
                 },
                 {
@@ -121,7 +121,7 @@ export function AppRoutes(): ReactElement | null {
                   element: <AdminTouristPointFormPageLazy />,
                 },
                 {
-                  path: "pontos-turisticos/:id/editar",
+                  path: "pontos-turisticos/editar",
                   element: <AdminTouristPointFormPageLazy />,
                 },
               ],

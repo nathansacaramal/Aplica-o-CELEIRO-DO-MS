@@ -81,7 +81,10 @@ export function AdminEventsListPage(): ReactElement {
                     </td>
                     <td className="py-4">
                       <div className="flex justify-end gap-2">
-                        <Link to={`/admin/eventos/${item.id}/editar`}>
+                        <Link
+                          to="/admin/eventos/editar"
+                          state={{ id: item.id }}
+                        >
                           <Button variant="secondary" size="sm">
                             Editar
                           </Button>

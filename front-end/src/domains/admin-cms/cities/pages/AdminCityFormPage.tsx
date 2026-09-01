@@ -6,7 +6,7 @@ import {
   type SyntheticEvent,
   type ReactElement,
 } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Button, Card, SectionHeader } from "@/design-system/ui";
 import type {
   ICity,
@@ -19,7 +19,7 @@ import { imageUrlForUpdate } from "@/domains/admin-cms/utils/imageUrlForUpdate";
 import { adminApiClient } from "@/services/admin-api/client";
 import { toApiError } from "@/services/api/apiError";
 
-interface ICityFormRouteParams {
+interface ICityFormRouteState {
   id?: number;
 }
 
@@ -68,11 +68,18 @@ function slugifyCityName(value: string): string {
 
 export function AdminCityFormPage(): ReactElement {
   const navigate = useNavigate();
-  const params = useParams<keyof ICityFormRouteParams>();
-  const rawCityId = Number(params.id);
+  const location = useLocation();
+  // O id do registro chega pelo state da navegação (Link/navigate), não pela
+  // URL — assim a URL de edição fica sem identificador. Como consequência,
+  // atualizar a página (F5) ou colar a URL direto perde o id: nesse caso
+  // redirecionamos para a listagem em vez de cair sem querer no modo de
+  // cadastro (ver checagem de `isEditRoute` mais abaixo).
+  const routeState = location.state as ICityFormRouteState | null;
+  const rawCityId = Number(routeState?.id);
   const cityId: number | undefined =
     Number.isFinite(rawCityId) && rawCityId > 0 ? rawCityId : undefined;
 
+  const isEditRoute: boolean = location.pathname.endsWith("/editar");
   const isEditMode: boolean = Boolean(cityId);
 
   const {
@@ -177,7 +184,7 @@ export function AdminCityFormPage(): ReactElement {
     }
   }
 
-  if (notFound) {
+  if (notFound || (isEditRoute && !cityId)) {
     return <Navigate to="/admin/cidades" replace />;
   }
 

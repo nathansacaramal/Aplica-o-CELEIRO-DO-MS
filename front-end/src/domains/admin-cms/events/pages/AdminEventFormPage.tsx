@@ -6,7 +6,7 @@ import {
   type SyntheticEvent,
   type ReactElement,
 } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Button, Card, SectionHeader } from "@/design-system/ui";
 import type { ICity } from "@/entities/city/city.types";
 import type {
@@ -28,7 +28,7 @@ import {
   updateAdminEvent,
 } from "@/services/admin-api/adminEvents.api";
 
-interface IEventFormRouteParams {
+interface IEventFormRouteState {
   id?: number;
 }
 
@@ -99,11 +99,15 @@ function mapEventToFormState(event: IEvent): IEventFormState {
 
 export function AdminEventFormPage(): ReactElement {
   const navigate = useNavigate();
-  const params = useParams<keyof IEventFormRouteParams>();
-  const rawEventId = Number(params.id);
+  const location = useLocation();
+  // O id chega pelo state da navegação (não pela URL). Sem state (F5 ou URL
+  // colada direto), redirecionamos para a listagem — ver `isEditRoute` abaixo.
+  const routeState = location.state as IEventFormRouteState | null;
+  const rawEventId = Number(routeState?.id);
   const eventId: number | undefined =
     Number.isFinite(rawEventId) && rawEventId > 0 ? rawEventId : undefined;
 
+  const isEditRoute: boolean = location.pathname.endsWith("/editar");
   const isEditMode: boolean = Boolean(eventId);
 
   const {
@@ -260,7 +264,7 @@ export function AdminEventFormPage(): ReactElement {
     }
   }
 
-  if (notFound) {
+  if (notFound || (isEditRoute && !eventId)) {
     return <Navigate to="/admin/eventos" replace />;
   }
 

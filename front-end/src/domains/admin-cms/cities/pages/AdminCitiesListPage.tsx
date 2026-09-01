@@ -79,7 +79,10 @@ export function AdminCitiesListPage(): ReactElement {
                     </td>
                     <td className="py-4">
                       <div className="flex justify-end gap-2">
-                        <Link to={`/admin/cidades/${item.id}/editar`}>
+                        <Link
+                          to="/admin/cidades/editar"
+                          state={{ id: item.id }}
+                        >
                           <Button variant="secondary" size="sm">
                             Editar
                           </Button>

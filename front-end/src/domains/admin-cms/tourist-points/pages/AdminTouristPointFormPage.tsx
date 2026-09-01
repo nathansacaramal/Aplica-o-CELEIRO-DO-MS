@@ -6,7 +6,7 @@ import {
   type SyntheticEvent,
   type ReactElement,
 } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Button, Card, SectionHeader } from "@/design-system/ui";
 import type { ICity } from "@/entities/city/city.types";
 import type {
@@ -30,7 +30,7 @@ import {
 import { adminApiClient } from "@/services/admin-api/client";
 import { toApiError } from "@/services/api/apiError";
 
-interface ITouristPointFormRouteParams {
+interface ITouristPointFormRouteState {
   id?: number;
 }
 
@@ -81,13 +81,17 @@ function mapTouristPointToFormState(
 
 export function AdminTouristPointFormPage(): ReactElement {
   const navigate = useNavigate();
-  const params = useParams<keyof ITouristPointFormRouteParams>();
-  const rawTouristPointId = Number(params.id);
+  const location = useLocation();
+  // O id chega pelo state da navegação (não pela URL). Sem state (F5 ou URL
+  // colada direto), redirecionamos para a listagem — ver `isEditRoute` abaixo.
+  const routeState = location.state as ITouristPointFormRouteState | null;
+  const rawTouristPointId = Number(routeState?.id);
   const touristPointId: number | undefined =
     Number.isFinite(rawTouristPointId) && rawTouristPointId > 0
       ? rawTouristPointId
       : undefined;
 
+  const isEditRoute: boolean = location.pathname.endsWith("/editar");
   const isEditMode: boolean = Boolean(touristPointId);
 
   const {
@@ -251,7 +255,7 @@ export function AdminTouristPointFormPage(): ReactElement {
     }
   }
 
-  if (notFound) {
+  if (notFound || (isEditRoute && !touristPointId)) {
     return <Navigate to="/admin/pontos-turisticos" replace />;
   }
 
