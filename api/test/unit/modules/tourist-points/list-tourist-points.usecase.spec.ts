@@ -8,6 +8,7 @@ describe("ListTouristPointsUseCase", () => {
     id: 1,
     cityId: 1,
     citySlug: "cg",
+    slug: "ponto",
     name: "Ponto",
     description: "D",
     category: "museu",

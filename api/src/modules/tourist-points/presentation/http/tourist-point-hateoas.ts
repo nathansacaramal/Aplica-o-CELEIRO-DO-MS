@@ -15,7 +15,17 @@ export function touristPointLinks(id: number): Links {
 
 export function touristPointPublicLinks(id: number): Links {
   return {
-    self: { href: `${API_PUBLIC}/tourist-points/${id}`, method: "GET" },
+    self: { href: `${API_PUBLIC}/tourist-points/by-id/${id}`, method: "GET" },
+    list: { href: `${API_PUBLIC}/tourist-points`, method: "GET" },
+  };
+}
+
+export function touristPointPublicBySlugLinks(slug: string): Links {
+  return {
+    self: {
+      href: `${API_PUBLIC}/tourist-points/${encodeURIComponent(slug)}`,
+      method: "GET",
+    },
     list: { href: `${API_PUBLIC}/tourist-points`, method: "GET" },
   };
 }

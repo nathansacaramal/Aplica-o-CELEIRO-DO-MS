@@ -6,7 +6,7 @@ import {
   SectionHeader,
 } from "@/design-system/ui";
 import { labelForEventCategory } from "@/constants/contentCategories";
-import { usePublishedEventById } from "@/domains/catalogo-publico/eventos/hooks/usePublishedEventById";
+import { usePublishedEventBySlug } from "@/domains/catalogo-publico/eventos/hooks/usePublishedEventBySlug";
 import { EmptyState } from "@/domains/catalogo-publico/shared/components/EmptyState";
 import { PublicEntityDetailSkeleton } from "@/domains/catalogo-publico/shared/components/PublicEntityDetailSkeleton";
 import { truncateMetaDescription } from "@/shell/public/seo/truncateMetaDescription";
@@ -15,21 +15,16 @@ import { type ReactElement } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 
 interface IEventRouteParams {
-  id?: number;
+  slug?: string;
 }
 
 export function EventoDetailsPage(): ReactElement {
   const params = useParams<keyof IEventRouteParams>();
-  const rawId = Number(params.id);
-  const id: number | undefined =
-    Number.isFinite(rawId) && rawId > 0 ? rawId : undefined;
+  const slug: string | undefined = params.slug;
 
-  const { event, isLoading, notFound, error } = usePublishedEventById(id);
+  const { event, isLoading, notFound, error } = usePublishedEventBySlug(slug);
 
-  const canonicalEventPath =
-    Number.isFinite(id) && id !== undefined && id > 0
-      ? `/eventos/${id}`
-      : "/eventos";
+  const canonicalEventPath = slug ? `/eventos/${slug}` : "/eventos";
 
   usePublicPageMetadata({
     title: event

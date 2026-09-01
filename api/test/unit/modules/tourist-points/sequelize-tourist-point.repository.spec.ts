@@ -7,6 +7,7 @@ jest.mock("@/modules/tourist-points/infra/model/tourist-point-model", () => ({
   default: {
     create: jest.fn(),
     findByPk: jest.fn(),
+    findOne: jest.fn(),
     findAll: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
@@ -18,6 +19,7 @@ const modelRow = {
   id: 10,
   cityId: 2,
   citySlug: "campo-grande",
+  slug: "parque",
   name: "Parque",
   description: "D",
   category: "parque",
@@ -32,6 +34,7 @@ const makeEntity = () =>
   new TouristPointEntity({
     cityId: 2,
     citySlug: "campo-grande",
+    slug: "parque",
     name: "Parque",
     description: "D",
     category: "parque",
@@ -71,6 +74,18 @@ describe("SequelizeTouristPointRepository", () => {
     const out = await repo.findById(10);
     expect(out?.id).toBe(10);
     expect(out?.citySlug).toBe("campo-grande");
+  });
+
+  it("publicFindBySlug null e ok (apenas publicados)", async () => {
+    (TouristPointModel.findOne as jest.Mock).mockResolvedValueOnce(null);
+    expect(await repo.publicFindBySlug("x")).toBeNull();
+
+    (TouristPointModel.findOne as jest.Mock).mockResolvedValueOnce({ ...modelRow });
+    const out = await repo.publicFindBySlug("parque");
+    expect(out?.slug).toBe("parque");
+    expect(TouristPointModel.findOne).toHaveBeenCalledWith({
+      where: { slug: "parque", published: true },
+    });
   });
 
   it("findByCityId mapeia lista", async () => {

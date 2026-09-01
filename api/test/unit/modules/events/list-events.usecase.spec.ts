@@ -6,6 +6,7 @@ const eventRow = new EventEntity({
   id: 1,
   cityId: 1,
   citySlug: "cg",
+  slug: "e",
   name: "E",
   description: "D",
   category: "show",

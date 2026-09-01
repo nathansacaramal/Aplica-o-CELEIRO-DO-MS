@@ -25,6 +25,7 @@ export type ListEventsResult = {
     id: number;
     cityId: number;
     citySlug: string;
+    slug: string;
     name: string;
     description: string;
     category: EventCategory;

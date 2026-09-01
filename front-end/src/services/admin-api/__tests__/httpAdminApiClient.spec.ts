@@ -641,6 +641,7 @@ describe("createHttpAdminApiClient", () => {
       await client.createEvent({
         cityId: 1,
         citySlug: "c",
+        slug: "e",
         name: "E",
         description: "d",
         featured: false,
@@ -772,6 +773,7 @@ describe("createHttpAdminApiClient", () => {
       await client.createTouristPoint({
         cityId: 1,
         citySlug: "c",
+        slug: "p",
         name: "P",
         description: "d",
         featured: false,

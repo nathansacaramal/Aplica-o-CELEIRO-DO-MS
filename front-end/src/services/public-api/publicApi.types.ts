@@ -43,12 +43,16 @@ export interface IPublicApiClient {
     params: IPublicListParams,
   ) => Promise<IPublicListResponse<IEvent>>;
   getPublishedEventById: (id: number) => Promise<IEvent | null>;
+  getPublishedEventBySlug: (slug: string) => Promise<IEvent | null>;
   listPublishedEventByCityId(cityId: number): Promise<IEvent[] | null>;
 
   listPublishedTouristPoints: (
     params: IPublicListParams,
   ) => Promise<IPublicListResponse<ITouristPoint>>;
   getPublishedTouristPointById: (id: number) => Promise<ITouristPoint | null>;
+  getPublishedTouristPointBySlug: (
+    slug: string,
+  ) => Promise<ITouristPoint | null>;
   listPublishedTouristPointByCityId(
     cityId: number,
   ): Promise<ITouristPoint[] | null>;

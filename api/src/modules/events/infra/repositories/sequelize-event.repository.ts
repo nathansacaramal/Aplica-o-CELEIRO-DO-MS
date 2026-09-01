@@ -5,6 +5,7 @@ import { EventEntity } from "../../domain/entities/event.entity";
 import { CreateEventRepository } from "../../domain/repositories/create-event.repository";
 import { DeleteEventRepository } from "../../domain/repositories/delete-event.repository";
 import { FindEventByIdRepository } from "../../domain/repositories/find-event-by-id.repository";
+import { FindEventBySlugRepository } from "../../domain/repositories/find-event-by-slug.repository";
 import {
   ListEventsRepository,
   ListEventsQuery,
@@ -38,6 +39,7 @@ export class SequelizeEventRepository
   implements
     CreateEventRepository,
     FindEventByIdRepository,
+    FindEventBySlugRepository,
     ListEventsRepository,
     UpdateEventRepository,
     DeleteEventRepository
@@ -47,6 +49,7 @@ export class SequelizeEventRepository
       {
         cityId: event.cityId,
         citySlug: event.citySlug,
+        slug: event.slug,
         name: event.name,
         description: event.description,
         category: event.category,
@@ -69,6 +72,11 @@ export class SequelizeEventRepository
     return found ? eventModelToEntity(found) : null;
   }
 
+  async publicFindBySlug(slug: string): Promise<EventEntity | null> {
+    const found = await EventModel.findOne({ where: { slug, published: true } });
+    return found ? eventModelToEntity(found) : null;
+  }
+
   async update(
     id: number,
     data: Partial<EventEntity["props"]>,
@@ -81,6 +89,7 @@ export class SequelizeEventRepository
       {
         cityId: data.cityId ?? found.cityId,
         citySlug: data.citySlug ?? found.citySlug,
+        slug: data.slug ?? found.slug,
         name: data.name ?? found.name,
         description: data.description ?? found.description,
         category: data.category ?? found.category,

@@ -6,6 +6,7 @@ const entity = new EventEntity({
   id: 1,
   cityId: 1,
   citySlug: "cg",
+  slug: "show",
   name: "Show",
   description: "Desc",
   category: "show",

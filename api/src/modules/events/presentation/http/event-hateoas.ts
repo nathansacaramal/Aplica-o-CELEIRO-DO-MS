@@ -11,7 +11,17 @@ const EVENTS_PUBLIC_BASE = `${API_PUBLIC_PREFIX}/events`;
 export function eventPublicLinks(id: string | number): Links {
   const eventId = String(id);
   return {
-    self: { href: `${API_PUBLIC_PREFIX}/events/${eventId}`, method: "GET" },
+    self: { href: `${API_PUBLIC_PREFIX}/events/by-id/${eventId}`, method: "GET" },
+    list: { href: `${API_PUBLIC_PREFIX}/events`, method: "GET" },
+  };
+}
+
+export function eventPublicBySlugLinks(slug: string): Links {
+  return {
+    self: {
+      href: `${API_PUBLIC_PREFIX}/events/${encodeURIComponent(slug)}`,
+      method: "GET",
+    },
     list: { href: `${API_PUBLIC_PREFIX}/events`, method: "GET" },
   };
 }

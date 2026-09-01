@@ -11,6 +11,7 @@ export function toEventHttpPayload(source: EventEntity | EventProps) {
     id: e.id,
     cityId: e.cityId,
     citySlug: e.citySlug,
+    slug: e.slug,
     name: e.name,
     description: e.description,
     category: e.category,

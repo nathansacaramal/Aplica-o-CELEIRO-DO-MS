@@ -6,6 +6,7 @@ export function mapEventFromApi(raw: Record<string, unknown>): IEvent {
     id: Number(raw.id),
     cityId: Number(raw.cityId),
     citySlug: String(raw.citySlug ?? ""),
+    slug: String(raw.slug ?? ""),
     name: String(raw.name ?? ""),
     description: String(raw.description ?? ""),
     category: raw.category !== undefined ? String(raw.category) : undefined,

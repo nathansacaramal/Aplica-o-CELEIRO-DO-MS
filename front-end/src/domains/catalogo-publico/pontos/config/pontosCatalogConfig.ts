@@ -24,7 +24,7 @@ function mapTouristPointToCatalogItem(
       : undefined,
     localLabel: touristPoint.address,
     destaque: touristPoint.featured,
-    href: `/pontos-turisticos/${touristPoint.id}`,
+    href: `/pontos-turisticos/${touristPoint.slug}`,
     ctaLabel: "Ver local",
   };
 }

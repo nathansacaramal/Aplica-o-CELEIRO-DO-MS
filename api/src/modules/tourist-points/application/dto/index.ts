@@ -10,6 +10,7 @@ export type TouristPointPersistedDTO = {
   id: number;
   cityId: number;
   citySlug: string;
+  slug: string;
   name: string;
   description: string;
   category: TouristPointCategory;

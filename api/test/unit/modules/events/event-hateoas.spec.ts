@@ -8,7 +8,7 @@ import {
 describe("event-hateoas", () => {
   it("eventPublicLinks e eventLinks", () => {
     const pub = eventPublicLinks(5);
-    expect(pub["self"]!.href).toContain("/api/public/events/5");
+    expect(pub["self"]!.href).toContain("/api/public/events/by-id/5");
     expect(eventLinks(5).update?.method).toBe("PATCH");
   });
 

@@ -14,6 +14,7 @@ export function toTouristPointHttpPayload(entity: TouristPointResponseSource) {
     id: entity.id as number,
     cityId: entity.cityId,
     citySlug: entity.citySlug,
+    slug: entity.slug,
     name: entity.name,
     description: entity.description,
     category: entity.category,

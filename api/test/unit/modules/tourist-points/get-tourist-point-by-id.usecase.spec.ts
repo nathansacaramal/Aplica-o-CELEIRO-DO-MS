@@ -8,6 +8,7 @@ describe("GetTouristPointByIdUseCase", () => {
     id: 3,
     cityId: 1,
     citySlug: "cg",
+    slug: "m",
     name: "M",
     description: "D",
     category: "museu",
@@ -45,6 +46,7 @@ describe("GetTouristPointByIdUseCase", () => {
     const noId = new TouristPointEntity({
       cityId: 1,
       citySlug: "cg",
+      slug: "x",
       name: "X",
       description: "D",
       category: "museu",

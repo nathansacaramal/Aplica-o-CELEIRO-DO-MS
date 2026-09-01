@@ -22,6 +22,7 @@ import {
 import { useAdminEventFormSource } from "@/domains/admin-cms/events/hooks/useAdminEventFormSource";
 import { buildFormattedDateRangePtBr } from "@/domains/admin-cms/events/utils/buildFormattedDateRangePtBr";
 import { imageUrlForUpdate } from "@/domains/admin-cms/utils/imageUrlForUpdate";
+import { slugify } from "@/domains/admin-cms/utils/slugify";
 import { toApiError } from "@/services/api/apiError";
 import {
   createAdminEvent,
@@ -35,6 +36,7 @@ interface IEventFormRouteState {
 interface IEventFormState {
   cityId: number;
   citySlug: string;
+  slug: string;
   name: string;
   description: string;
   category: string;
@@ -51,6 +53,7 @@ function buildInitialFormState(): IEventFormState {
   return {
     cityId: 0,
     citySlug: "",
+    slug: "",
     name: "",
     description: "",
     category: "",
@@ -84,6 +87,7 @@ function mapEventToFormState(event: IEvent): IEventFormState {
   return {
     cityId: event.cityId,
     citySlug: event.citySlug,
+    slug: event.slug,
     name: event.name,
     description: event.description,
     category: event.category ?? "",
@@ -182,6 +186,10 @@ export function AdminEventFormPage(): ReactElement {
         nextState.citySlug = selectedCity?.slug ?? "";
       }
 
+      if (name === "name" && !isEditMode) {
+        nextState.slug = slugify(value);
+      }
+
       if (name === "startDate" || name === "endDate") {
         return syncFormattedDateFromDateFields(nextState);
       }
@@ -220,6 +228,7 @@ export function AdminEventFormPage(): ReactElement {
           id: eventId,
           cityId: formState.cityId,
           citySlug: formState.citySlug,
+          slug: formState.slug.trim(),
           name: formState.name.trim(),
           description: formState.description.trim(),
           category: formState.category.trim() || undefined,
@@ -241,6 +250,7 @@ export function AdminEventFormPage(): ReactElement {
         const input: ICreateEventInput = {
           cityId: formState.cityId,
           citySlug: formState.citySlug,
+          slug: formState.slug.trim(),
           name: formState.name.trim(),
           description: formState.description.trim(),
           category: formState.category.trim() || undefined,
@@ -347,6 +357,19 @@ export function AdminEventFormPage(): ReactElement {
               id="name"
               name="name"
               value={formState.name}
+              onChange={handleInputChange}
+              className="w-full rounded-xl border border-zinc-300 px-3 py-3 text-sm outline-none transition focus:border-[var(--color-primary)]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="slug" className="text-sm font-medium text-zinc-700">
+              Slug
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              value={formState.slug}
               onChange={handleInputChange}
               className="w-full rounded-xl border border-zinc-300 px-3 py-3 text-sm outline-none transition focus:border-[var(--color-primary)]"
             />

@@ -257,6 +257,39 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
       response: { status: 404 },
     });
     await expect(client.getPublishedEventById(999)).resolves.toBeNull();
+
+    expect(mockGet).toHaveBeenNthCalledWith(1, "/public/events/by-id/1");
+  });
+
+  it("getPublishedEventBySlug retorna evento ou null (404 / não publicado)", async () => {
+    const client = createHttpPublicApiClient("https://x/api");
+
+    mockGet.mockResolvedValueOnce({
+      data: resourceBody({
+        id: 1,
+        cityId: 1,
+        citySlug: "a",
+        slug: "fest",
+        name: "E",
+        description: "",
+        published: true,
+        featured: false,
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      }),
+    });
+    await expect(client.getPublishedEventBySlug("fest")).resolves.toMatchObject(
+      { slug: "fest", published: true },
+    );
+    expect(mockGet).toHaveBeenCalledWith("/public/events/fest");
+
+    mockGet.mockRejectedValueOnce({
+      isAxiosError: true,
+      response: { status: 404 },
+    });
+    await expect(
+      client.getPublishedEventBySlug("inexistente"),
+    ).resolves.toBeNull();
   });
 
   it("getPublishedEventById propaga falha que não é 404", async () => {
@@ -298,6 +331,39 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
       response: { status: 404 },
     });
     await expect(client.getPublishedTouristPointById(999)).resolves.toBeNull();
+
+    expect(mockGet).toHaveBeenNthCalledWith(1, "/public/tourist-points/by-id/1");
+  });
+
+  it("getPublishedTouristPointBySlug retorna ponto ou null (404 / não publicado)", async () => {
+    const client = createHttpPublicApiClient("https://x/api");
+
+    mockGet.mockResolvedValueOnce({
+      data: resourceBody({
+        id: 1,
+        cityId: 1,
+        citySlug: "a",
+        slug: "parque",
+        name: "P",
+        description: "",
+        published: true,
+        featured: false,
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      }),
+    });
+    await expect(
+      client.getPublishedTouristPointBySlug("parque"),
+    ).resolves.toMatchObject({ slug: "parque", published: true });
+    expect(mockGet).toHaveBeenCalledWith("/public/tourist-points/parque");
+
+    mockGet.mockRejectedValueOnce({
+      isAxiosError: true,
+      response: { status: 404 },
+    });
+    await expect(
+      client.getPublishedTouristPointBySlug("inexistente"),
+    ).resolves.toBeNull();
   });
 
   it("getPublishedTouristPointById propaga falha que não é 404", async () => {
@@ -648,8 +714,8 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
     expect(hi.touristPoints).toHaveLength(1);
     expect(hi.touristPoints[0]?.id).toBe(60);
     expect(mockGet).toHaveBeenCalledWith("/public/home-content");
-    expect(mockGet).toHaveBeenCalledWith("/public/events/50");
-    expect(mockGet).toHaveBeenCalledWith("/public/tourist-points/60");
+    expect(mockGet).toHaveBeenCalledWith("/public/events/by-id/50");
+    expect(mockGet).toHaveBeenCalledWith("/public/tourist-points/by-id/60");
   });
 
   it("getHomeHighlights ignora destaque cujo GET por id falha e mantém os demais", async () => {

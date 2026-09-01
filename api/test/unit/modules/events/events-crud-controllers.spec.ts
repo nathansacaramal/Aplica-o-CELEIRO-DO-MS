@@ -1,6 +1,7 @@
 import { CreateEventController } from "@/modules/events/presentation/http/controllers/create-event.controller";
 import { DeleteEventController } from "@/modules/events/presentation/http/controllers/delete-event.controller";
 import { GetEventByIdController } from "@/modules/events/presentation/http/controllers/get-event-by-id.controller";
+import { FindEventBySlugController } from "@/modules/events/presentation/http/controllers/find-event-by-slug.controller";
 import { UpdateEventController } from "@/modules/events/presentation/http/controllers/update-event.controller";
 import { EventEntity } from "@/modules/events/domain/entities/event.entity";
 
@@ -12,6 +13,7 @@ const entity = new EventEntity({
   id: 7,
   cityId: 1,
   citySlug: "cg",
+  slug: "fest",
   name: "Fest",
   description: "D",
   category: "show",
@@ -30,6 +32,7 @@ const tinyPngB64 =
 const createDto = {
   cityId: 1,
   citySlug: "cg",
+  slug: "fest",
   name: "Fest",
   description: "Descrição do evento aqui",
   category: "show" as const,
@@ -66,6 +69,24 @@ describe("GetEventByIdController", () => {
     expect((await sut.handle({ correlationId: "c", params: { id: "7" } })).statusCode).not.toBe(
       200,
     );
+  });
+});
+
+describe("FindEventBySlugController", () => {
+  const execute = jest.fn();
+  const sut = new FindEventBySlugController({ execute } as never);
+
+  it("200 quando encontrado", async () => {
+    execute.mockResolvedValue(entity);
+    const r = await sut.handle({ correlationId: "c", params: { slug: "fest" } });
+    expect(r.statusCode).toBe(200);
+  });
+
+  it("404 quando não encontrado", async () => {
+    execute.mockResolvedValue(null);
+    const r = await sut.handle({ correlationId: "c", params: { slug: "inexistente" } });
+    expect(r.statusCode).toBe(404);
+    expect(r.body).toMatchObject({ error: { code: "EVENT_NOT_FOUND" } });
   });
 });
 

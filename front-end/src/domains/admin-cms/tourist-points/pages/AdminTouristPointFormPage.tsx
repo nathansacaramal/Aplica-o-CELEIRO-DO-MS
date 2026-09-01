@@ -21,6 +21,7 @@ import {
 } from "@/constants/contentCategories";
 import { useAdminTouristPointFormSource } from "@/domains/admin-cms/tourist-points/hooks/useAdminTouristPointFormSource";
 import { imageUrlForUpdate } from "@/domains/admin-cms/utils/imageUrlForUpdate";
+import { slugify } from "@/domains/admin-cms/utils/slugify";
 import {
   finalizeHHmmString,
   maskHHmmInput,
@@ -37,6 +38,7 @@ interface ITouristPointFormRouteState {
 interface ITouristPointFormState {
   cityId: number;
   citySlug: string;
+  slug: string;
   name: string;
   description: string;
   category: string;
@@ -51,6 +53,7 @@ function buildInitialFormState(): ITouristPointFormState {
   return {
     cityId: 0,
     citySlug: "",
+    slug: "",
     name: "",
     description: "",
     category: "",
@@ -68,6 +71,7 @@ function mapTouristPointToFormState(
   return {
     cityId: touristPoint.cityId,
     citySlug: touristPoint.citySlug,
+    slug: touristPoint.slug,
     name: touristPoint.name,
     description: touristPoint.description,
     category: touristPoint.category ?? "",
@@ -166,6 +170,10 @@ export function AdminTouristPointFormPage(): ReactElement {
         nextState.citySlug = selectedCity?.slug ?? "";
       }
 
+      if (name === "name" && !isEditMode) {
+        nextState.slug = slugify(value);
+      }
+
       return nextState;
     });
 
@@ -212,6 +220,7 @@ export function AdminTouristPointFormPage(): ReactElement {
           id: touristPointId,
           cityId: formState.cityId,
           citySlug: formState.citySlug,
+          slug: formState.slug.trim(),
           name: formState.name.trim(),
           description: formState.description.trim(),
           category: formState.category.trim() || undefined,
@@ -231,6 +240,7 @@ export function AdminTouristPointFormPage(): ReactElement {
         const input: ICreateTouristPointInput = {
           cityId: formState.cityId,
           citySlug: formState.citySlug,
+          slug: formState.slug.trim(),
           name: formState.name.trim(),
           description: formState.description.trim(),
           category: formState.category.trim() || undefined,
@@ -338,6 +348,19 @@ export function AdminTouristPointFormPage(): ReactElement {
               id="name"
               name="name"
               value={formState.name}
+              onChange={handleInputChange}
+              className="w-full rounded-xl border border-zinc-300 px-3 py-3 text-sm outline-none transition focus:border-[var(--color-primary)]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="slug" className="text-sm font-medium text-zinc-700">
+              Slug
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              value={formState.slug}
               onChange={handleInputChange}
               className="w-full rounded-xl border border-zinc-300 px-3 py-3 text-sm outline-none transition focus:border-[var(--color-primary)]"
             />

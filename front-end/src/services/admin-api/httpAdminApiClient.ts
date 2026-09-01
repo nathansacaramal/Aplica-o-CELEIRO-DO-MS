@@ -410,6 +410,7 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
       const { data } = await http.post<unknown>("/admin/events", {
         cityId: input.cityId,
         citySlug: input.citySlug,
+        slug: input.slug,
         name: input.name,
         description: input.description,
         category: input.category,
@@ -496,6 +497,7 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
       const { data } = await http.post<unknown>("/admin/tourist-points", {
         cityId: input.cityId,
         citySlug: input.citySlug,
+        slug: input.slug,
         name: input.name,
         description: input.description,
         category: input.category,

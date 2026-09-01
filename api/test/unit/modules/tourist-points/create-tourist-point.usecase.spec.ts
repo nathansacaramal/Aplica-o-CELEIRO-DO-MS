@@ -10,6 +10,7 @@ const tinyPngB64 =
 const dto: createTouristPointDTO = {
   cityId: 1,
   citySlug: "campo-grande",
+  slug: "parque",
   name: "Parque",
   description: "Descrição do parque",
   category: "parque",
@@ -25,6 +26,7 @@ describe("CreateTouristPointUseCase", () => {
     id: 10,
     cityId: 1,
     citySlug: "campo-grande",
+    slug: "parque",
     name: "Parque",
     description: "Descrição do parque",
     category: "parque",
@@ -60,6 +62,7 @@ describe("CreateTouristPointUseCase", () => {
       id: 10,
       cityId: 1,
       citySlug: "campo-grande",
+      slug: "parque",
       name: "Parque",
       description: "Descrição do parque",
       category: "parque",

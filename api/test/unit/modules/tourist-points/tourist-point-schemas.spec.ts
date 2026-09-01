@@ -10,6 +10,7 @@ const tinyPngB64 =
 const validCreate = {
   cityId: 1,
   citySlug: "campo-grande",
+  slug: "parque",
   name: "Parque",
   description: "Um parque na cidade",
   category: "parque" as const,

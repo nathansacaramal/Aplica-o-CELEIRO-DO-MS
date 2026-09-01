@@ -6,7 +6,7 @@ import {
   SectionHeader,
 } from "@/design-system/ui";
 import { labelForTouristPointCategory } from "@/constants/contentCategories";
-import { usePublishedTouristPointById } from "@/domains/catalogo-publico/pontos/hooks/usePublishedTouristPointById";
+import { usePublishedTouristPointBySlug } from "@/domains/catalogo-publico/pontos/hooks/usePublishedTouristPointBySlug";
 import { EmptyState } from "@/domains/catalogo-publico/shared/components/EmptyState";
 import { PublicEntityDetailSkeleton } from "@/domains/catalogo-publico/shared/components/PublicEntityDetailSkeleton";
 import { truncateMetaDescription } from "@/shell/public/seo/truncateMetaDescription";
@@ -15,22 +15,19 @@ import { type ReactElement } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 
 interface ITouristPointRouteParams {
-  id?: number;
+  slug?: string;
 }
 
 export function PontoTuristicoDetailsPage(): ReactElement {
   const params = useParams<keyof ITouristPointRouteParams>();
-  const rawId = Number(params.id);
-  const id: number | undefined =
-    Number.isFinite(rawId) && rawId > 0 ? rawId : undefined;
+  const slug: string | undefined = params.slug;
 
   const { touristPoint, isLoading, notFound, error } =
-    usePublishedTouristPointById(id);
+    usePublishedTouristPointBySlug(slug);
 
-  const canonicalPontoPath =
-    Number.isFinite(id) && id !== undefined && id > 0
-      ? `/pontos-turisticos/${id}`
-      : "/pontos-turisticos";
+  const canonicalPontoPath = slug
+    ? `/pontos-turisticos/${slug}`
+    : "/pontos-turisticos";
 
   usePublicPageMetadata({
     title: touristPoint

@@ -7,6 +7,7 @@ class EventModel extends Model {
   id!: number;
   cityId!: number;
   citySlug!: string;
+  slug!: string;
   name!: string;
   description!: string;
   category!: string;
@@ -33,6 +34,14 @@ EventModel.init(
       },
     },
     citySlug: { type: DataTypes.STRING, allowNull: false },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      // Nome fixo evita que `sync({ alter: true })` crie um novo índice único a
+      // cada restart em dev (Sequelize não reconhece `unique: true` sem nome
+      // como equivalente a um índice já existente).
+      unique: "events_slug_unique",
+    },
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
     category: { type: DataTypes.STRING, allowNull: false },

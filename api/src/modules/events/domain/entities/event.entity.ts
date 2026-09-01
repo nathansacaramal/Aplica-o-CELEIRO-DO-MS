@@ -5,6 +5,7 @@ export interface EventProps {
   id: number;
   cityId: number;
   citySlug: string;
+  slug: string;
   name: string;
   description: string;
   category: EventCategory;
@@ -30,6 +31,9 @@ export class EventEntity {
   }
   get citySlug() {
     return this.props.citySlug;
+  }
+  get slug() {
+    return this.props.slug;
   }
   get name() {
     return this.props.name;

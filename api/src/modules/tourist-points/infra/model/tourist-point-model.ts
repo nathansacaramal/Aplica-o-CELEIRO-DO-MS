@@ -7,6 +7,7 @@ export class TouristPointModel extends Model {
   id!: number;
   cityId!: number;
   citySlug!: string;
+  slug!: string;
   name!: string;
   description!: string;
   category!: TouristPointCategory;
@@ -36,6 +37,14 @@ TouristPointModel.init(
     citySlug: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      // Nome fixo evita que `sync({ alter: true })` crie um novo índice único a
+      // cada restart em dev (Sequelize não reconhece `unique: true` sem nome
+      // como equivalente a um índice já existente).
+      unique: "tourist_points_slug_unique",
     },
     name: {
       type: DataTypes.STRING,

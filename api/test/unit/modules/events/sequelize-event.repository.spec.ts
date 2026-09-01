@@ -7,6 +7,7 @@ jest.mock("@/modules/events/infra/model/event-model", () => ({
   default: {
     create: jest.fn(),
     findByPk: jest.fn(),
+    findOne: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
     findAndCountAll: jest.fn(),
@@ -17,6 +18,7 @@ const row = {
   id: 7,
   cityId: 1,
   citySlug: "cg",
+  slug: "fest",
   name: "Fest",
   description: "D",
   category: "show",
@@ -36,6 +38,7 @@ const makeEntity = () =>
     id: 0,
     cityId: 1,
     citySlug: "cg",
+    slug: "fest",
     name: "Fest",
     description: "D",
     category: "show",
@@ -66,6 +69,18 @@ describe("SequelizeEventRepository", () => {
     expect(await repo.findById(1)).toBeNull();
     (EventModel.findByPk as jest.Mock).mockResolvedValueOnce({ ...row });
     expect((await repo.findById(7))?.name).toBe("Fest");
+  });
+
+  it("publicFindBySlug null e ok (apenas publicados)", async () => {
+    (EventModel.findOne as jest.Mock).mockResolvedValueOnce(null);
+    expect(await repo.publicFindBySlug("x")).toBeNull();
+
+    (EventModel.findOne as jest.Mock).mockResolvedValueOnce({ ...row });
+    const out = await repo.publicFindBySlug("fest");
+    expect(out?.slug).toBe("fest");
+    expect(EventModel.findOne).toHaveBeenCalledWith({
+      where: { slug: "fest", published: true },
+    });
   });
 
   it("update null quando registro não existe", async () => {

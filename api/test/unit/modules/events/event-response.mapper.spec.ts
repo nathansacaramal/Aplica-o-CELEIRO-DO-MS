@@ -6,6 +6,7 @@ describe("toEventHttpPayload", () => {
     id: 1,
     cityId: 2,
     citySlug: "cg",
+    slug: "show",
     name: "Show",
     description: "D",
     category: "show" as const,

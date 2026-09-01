@@ -11,6 +11,7 @@ const tinyPngB64 =
 const dto: CreateEventDTO = {
   cityId: 1,
   citySlug: "cg",
+  slug: "fest",
   name: "Fest",
   description: "Descrição",
   category: "show",
@@ -28,6 +29,7 @@ describe("CreateEventUseCase", () => {
     id: 42,
     cityId: 1,
     citySlug: "cg",
+    slug: "fest",
     name: "Fest",
     description: "Descrição",
     category: "show",

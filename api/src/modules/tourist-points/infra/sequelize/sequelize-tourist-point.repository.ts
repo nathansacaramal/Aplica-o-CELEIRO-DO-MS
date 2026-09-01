@@ -8,6 +8,7 @@ import {
   ListTouristPointsSpecificationRepository,
   UpdateTouristPointRepository,
 } from "../../domain/repositories";
+import { FindTouristPointBySlugRepository } from "../../domain/repositories/find-tourist-point-by-slug.repository";
 import { QuerySpecification } from "../../domain/specifications/query-specification";
 import TouristPointModel from "../model/tourist-point-model";
 
@@ -17,6 +18,7 @@ export class SequelizeTouristPointRepository
     DeleteTouristPointRepository,
     FindTouristPointByCityRepository,
     FindTouristPointByIdRepository,
+    FindTouristPointBySlugRepository,
     UpdateTouristPointRepository,
     ListTouristPointsSpecificationRepository
 {
@@ -43,6 +45,7 @@ export class SequelizeTouristPointRepository
       {
         cityId: data.cityId,
         citySlug: data.citySlug,
+        slug: data.slug,
         name: data.name,
         description: data.description ?? null,
         category: data.category ?? null,
@@ -59,6 +62,7 @@ export class SequelizeTouristPointRepository
       id: created.id,
       cityId: created.cityId,
       citySlug: created.citySlug,
+      slug: created.slug,
       name: created.name,
       description: created.description,
       category: created.category,
@@ -74,10 +78,22 @@ export class SequelizeTouristPointRepository
     const point = await TouristPointModel.findByPk(id);
     if (!point) return null;
 
+    return this.toEntity(point);
+  }
+
+  async publicFindBySlug(slug: string): Promise<TouristPointEntity | null> {
+    const point = await TouristPointModel.findOne({ where: { slug, published: true } });
+    if (!point) return null;
+
+    return this.toEntity(point);
+  }
+
+  private toEntity(point: TouristPointModel): TouristPointEntity {
     return new TouristPointEntity({
       id: point.id,
       cityId: point.cityId,
       citySlug: point.citySlug,
+      slug: point.slug,
       name: point.name,
       description: point.description,
       category: point.category,
@@ -98,6 +114,7 @@ export class SequelizeTouristPointRepository
           id: p.id,
           cityId: p.cityId,
           citySlug: p.citySlug,
+          slug: p.slug,
           name: p.name,
           description: p.description,
           category: p.category,
@@ -119,6 +136,7 @@ export class SequelizeTouristPointRepository
       {
         cityId: data.cityId,
         citySlug: data.citySlug,
+        slug: data.slug,
         name: data.name,
         description: data.description,
         category: data.category,

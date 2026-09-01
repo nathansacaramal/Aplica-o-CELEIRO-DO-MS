@@ -1,6 +1,7 @@
 interface IEventBase {
   cityId: number;
   citySlug: string;
+  slug: string;
   name: string;
   description: string;
   category?: string;

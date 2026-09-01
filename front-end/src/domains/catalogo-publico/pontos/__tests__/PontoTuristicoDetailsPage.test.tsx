@@ -5,7 +5,7 @@ import { PontoTuristicoDetailsPage } from "../pages/PontoTuristicoDetailsPage";
 
 vi.mock("@/services/public-api/client", () => ({
   publicApiClient: {
-    getPublishedTouristPointById: vi.fn(),
+    getPublishedTouristPointBySlug: vi.fn(),
   },
 }));
 
@@ -16,7 +16,7 @@ function renderWithRoute(initialEntry: string) {
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
         <Route
-          path="/pontos-turisticos/:id"
+          path="/pontos-turisticos/:slug"
           element={<PontoTuristicoDetailsPage />}
         />
         <Route path="/pontos-turisticos" element={<div>Pontos fallback</div>} />
@@ -31,11 +31,11 @@ describe("PontoTuristicoDetailsPage", () => {
   });
 
   it("deve renderizar loading inicial", () => {
-    vi.mocked(publicApiClient.getPublishedTouristPointById).mockImplementation(
-      () => new Promise(() => undefined),
-    );
+    vi.mocked(
+      publicApiClient.getPublishedTouristPointBySlug,
+    ).mockImplementation(() => new Promise(() => undefined));
 
-    renderWithRoute("/pontos-turisticos/1");
+    renderWithRoute("/pontos-turisticos/parque-antenor-martins");
 
     expect(
       screen.getByRole("status", {
@@ -45,23 +45,27 @@ describe("PontoTuristicoDetailsPage", () => {
   });
 
   it("deve renderizar os dados do ponto turístico quando encontrado", async () => {
-    vi.mocked(publicApiClient.getPublishedTouristPointById).mockResolvedValue({
-      id: 1,
-      cityId: 1,
-      citySlug: "dourados",
-      name: "Parque Antenor Martins",
-      description: "Área verde com lago, pista de caminhada e espaço de lazer.",
-      category: "parque",
-      address: "Rua Antônio Emílio de Figueiredo",
-      openingHours: "08:00",
-      imageUrl: "/images/highlights/parque-antenor-martins.jpg",
-      featured: true,
-      published: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
+    vi.mocked(publicApiClient.getPublishedTouristPointBySlug).mockResolvedValue(
+      {
+        id: 1,
+        cityId: 1,
+        citySlug: "dourados",
+        slug: "parque-antenor-martins",
+        name: "Parque Antenor Martins",
+        description:
+          "Área verde com lago, pista de caminhada e espaço de lazer.",
+        category: "parque",
+        address: "Rua Antônio Emílio de Figueiredo",
+        openingHours: "08:00",
+        imageUrl: "/images/highlights/parque-antenor-martins.jpg",
+        featured: true,
+        published: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    );
 
-    renderWithRoute("/pontos-turisticos/1");
+    renderWithRoute("/pontos-turisticos/parque-antenor-martins");
 
     expect(
       await screen.findByText("Parque Antenor Martins"),
@@ -81,11 +85,11 @@ describe("PontoTuristicoDetailsPage", () => {
   });
 
   it("deve redirecionar para /pontos-turisticos quando o ponto não existir", async () => {
-    vi.mocked(publicApiClient.getPublishedTouristPointById).mockResolvedValue(
-      null,
-    );
+    vi.mocked(
+      publicApiClient.getPublishedTouristPointBySlug,
+    ).mockResolvedValue(null);
 
-    renderWithRoute("/pontos-turisticos/999999");
+    renderWithRoute("/pontos-turisticos/inexistente");
 
     await waitFor(() => {
       expect(screen.getByText("Pontos fallback")).toBeInTheDocument();
@@ -93,11 +97,11 @@ describe("PontoTuristicoDetailsPage", () => {
   });
 
   it("deve exibir estado de erro quando a API falhar", async () => {
-    vi.mocked(publicApiClient.getPublishedTouristPointById).mockRejectedValue(
+    vi.mocked(publicApiClient.getPublishedTouristPointBySlug).mockRejectedValue(
       new Error("timeout"),
     );
 
-    renderWithRoute("/pontos-turisticos/1");
+    renderWithRoute("/pontos-turisticos/parque-antenor-martins");
 
     expect(
       await screen.findByText("Erro ao carregar o ponto turístico"),

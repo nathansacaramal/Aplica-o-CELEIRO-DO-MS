@@ -4,6 +4,7 @@ export interface TouristPointProps {
   id?: number;
   cityId: number;
   citySlug: string;
+  slug: string;
   name: string;
   description: string;
   category: TouristPointCategory;
@@ -30,6 +31,10 @@ export class TouristPointEntity {
 
   get citySlug() {
     return this.props.citySlug;
+  }
+
+  get slug() {
+    return this.props.slug;
   }
 
   get name() {
@@ -69,6 +74,7 @@ export class TouristPointEntity {
       id: this.props.id,
       cityId: this.props.cityId,
       citySlug: this.props.citySlug,
+      slug: this.props.slug,
       name: this.props.name,
       description: this.props.description,
       category: this.props.category,

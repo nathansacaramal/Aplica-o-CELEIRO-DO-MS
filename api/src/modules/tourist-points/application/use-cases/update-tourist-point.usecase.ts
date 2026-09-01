@@ -45,6 +45,7 @@ export class UpdateTouristPointUseCase {
       id: touristPoint.id!,
       cityId: touristPoint.cityId,
       citySlug: touristPoint.citySlug,
+      slug: touristPoint.slug,
       name: touristPoint.name,
       description: touristPoint.description,
       category: touristPoint.category,

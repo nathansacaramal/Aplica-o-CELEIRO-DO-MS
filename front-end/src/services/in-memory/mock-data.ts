@@ -228,6 +228,7 @@ let eventsMock: IEvent[] = [
     id: 1,
     cityId: 1,
     citySlug: "dourados",
+    slug: "festival-gastronomico-de-dourados",
     name: "Festival Gastronômico de Dourados",
     description:
       "Sabores regionais, música e experiências culturais para valorizar o território.",
@@ -246,6 +247,7 @@ let eventsMock: IEvent[] = [
     id: 2,
     cityId: 2,
     citySlug: "itapora",
+    slug: "feira-cultural-de-itapora",
     name: "Feira Cultural de Itaporã",
     description: "Evento cultural com artesanato, música e gastronomia local.",
     category: "feira",
@@ -266,6 +268,7 @@ let touristPointsMock: ITouristPoint[] = [
     id: 1,
     cityId: 1,
     citySlug: "dourados",
+    slug: "parque-antenor-martins",
     name: "Parque Antenor Martins",
     description:
       "Área verde com lago, pista de caminhada e espaço de lazer para moradores e visitantes.",
@@ -282,6 +285,7 @@ let touristPointsMock: ITouristPoint[] = [
     id: 2,
     cityId: 2,
     citySlug: "itapora",
+    slug: "praca-central-de-itapora",
     name: "Praça Central de Itaporã",
     description:
       "Espaço urbano de convivência com potencial para eventos e circulação local.",

@@ -1,33 +1,30 @@
-import { isValidPublishedCatalogId } from "@/domains/catalogo-publico/shared/utils/isValidPublishedCatalogId";
+import { useEffect, useState } from "react";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import { toApiError } from "@/services/api/apiError";
 import { publicApiClient } from "@/services/public-api/client";
-import { useEffect, useState } from "react";
 
-export interface IUsePublishedTouristPointByIdResult {
+export interface IUsePublishedTouristPointBySlugResult {
   touristPoint: ITouristPoint | null;
   isLoading: boolean;
   notFound: boolean;
   error: string | null;
 }
 
-export function usePublishedTouristPointById(
-  id: number | undefined,
-): IUsePublishedTouristPointByIdResult {
-  const [touristPoint, setTouristPoint] = useState<ITouristPoint | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(
-    isValidPublishedCatalogId(id),
+export function usePublishedTouristPointBySlug(
+  slug: string | undefined,
+): IUsePublishedTouristPointBySlugResult {
+  const [touristPoint, setTouristPoint] = useState<ITouristPoint | null>(
+    null,
   );
-  const [notFound, setNotFound] = useState<boolean>(
-    !isValidPublishedCatalogId(id),
-  );
+  const [isLoading, setIsLoading] = useState<boolean>(Boolean(slug));
+  const [notFound, setNotFound] = useState<boolean>(!slug);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isActive: boolean = true;
 
     async function load(): Promise<void> {
-      if (!isValidPublishedCatalogId(id)) {
+      if (!slug) {
         setTouristPoint(null);
         setError(null);
         setNotFound(true);
@@ -42,7 +39,7 @@ export function usePublishedTouristPointById(
         setTouristPoint(null);
 
         const response: ITouristPoint | null =
-          await publicApiClient.getPublishedTouristPointById(id);
+          await publicApiClient.getPublishedTouristPointBySlug(slug);
 
         if (!isActive) {
           return;
@@ -73,7 +70,7 @@ export function usePublishedTouristPointById(
     return () => {
       isActive = false;
     };
-  }, [id]);
+  }, [slug]);
 
   return { touristPoint, isLoading, notFound, error };
 }

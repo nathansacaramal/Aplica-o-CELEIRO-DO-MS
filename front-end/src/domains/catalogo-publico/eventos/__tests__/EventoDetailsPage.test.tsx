@@ -5,7 +5,7 @@ import { EventoDetailsPage } from "../pages/EventoDetailsPage";
 
 vi.mock("@/services/public-api/client", () => ({
   publicApiClient: {
-    getPublishedEventById: vi.fn(),
+    getPublishedEventBySlug: vi.fn(),
   },
 }));
 
@@ -15,7 +15,7 @@ function renderWithRoute(initialEntry: string) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
-        <Route path="/eventos/:id" element={<EventoDetailsPage />} />
+        <Route path="/eventos/:slug" element={<EventoDetailsPage />} />
         <Route path="/eventos" element={<div>Eventos fallback</div>} />
       </Routes>
     </MemoryRouter>,
@@ -28,11 +28,11 @@ describe("EventoDetailsPage", () => {
   });
 
   it("deve renderizar loading inicial", () => {
-    vi.mocked(publicApiClient.getPublishedEventById).mockImplementation(
+    vi.mocked(publicApiClient.getPublishedEventBySlug).mockImplementation(
       () => new Promise(() => undefined),
     );
 
-    renderWithRoute("/eventos/1");
+    renderWithRoute("/eventos/festival-gastronomico-de-dourados");
 
     expect(
       screen.getByRole("status", { name: /carregando dados do evento/i }),
@@ -40,10 +40,11 @@ describe("EventoDetailsPage", () => {
   });
 
   it("deve renderizar os dados do evento quando encontrado", async () => {
-    vi.mocked(publicApiClient.getPublishedEventById).mockResolvedValue({
+    vi.mocked(publicApiClient.getPublishedEventBySlug).mockResolvedValue({
       id: 1,
       cityId: 1,
       citySlug: "dourados",
+      slug: "festival-gastronomico-de-dourados",
       name: "Festival Gastronômico de Dourados",
       description: "Sabores regionais, música e experiências culturais.",
       category: "gastronomia",
@@ -58,7 +59,7 @@ describe("EventoDetailsPage", () => {
       updatedAt: new Date().toISOString(),
     });
 
-    renderWithRoute("/eventos/1");
+    renderWithRoute("/eventos/festival-gastronomico-de-dourados");
 
     expect(
       await screen.findByText("Festival Gastronômico de Dourados"),
@@ -74,9 +75,9 @@ describe("EventoDetailsPage", () => {
   });
 
   it("deve redirecionar para /eventos quando o evento não existir", async () => {
-    vi.mocked(publicApiClient.getPublishedEventById).mockResolvedValue(null);
+    vi.mocked(publicApiClient.getPublishedEventBySlug).mockResolvedValue(null);
 
-    renderWithRoute("/eventos/999999");
+    renderWithRoute("/eventos/inexistente");
 
     await waitFor(() => {
       expect(screen.getByText("Eventos fallback")).toBeInTheDocument();
@@ -84,11 +85,11 @@ describe("EventoDetailsPage", () => {
   });
 
   it("deve exibir estado de erro quando a API falhar", async () => {
-    vi.mocked(publicApiClient.getPublishedEventById).mockRejectedValue(
+    vi.mocked(publicApiClient.getPublishedEventBySlug).mockRejectedValue(
       new Error("falha de rede"),
     );
 
-    renderWithRoute("/eventos/1");
+    renderWithRoute("/eventos/festival-gastronomico-de-dourados");
 
     expect(
       await screen.findByText("Erro ao carregar o evento"),

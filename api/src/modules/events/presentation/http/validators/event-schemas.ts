@@ -5,6 +5,7 @@ import { webImageFileSchema } from "@/modules/media/application/validators/web-i
 export const createEventSchema = z.object({
   cityId: z.coerce.number().int().positive("Selecione uma cidade"),
   citySlug: z.string(),
+  slug: z.string().min(3, "Slug deve ter pelo menos 3 caracteres"),
   name: z.string().min(3, "Título deve ter pelo menos 3 caracteres"),
   description: z.string(),
   category: z.enum(EVENT_CATEGORIES, {

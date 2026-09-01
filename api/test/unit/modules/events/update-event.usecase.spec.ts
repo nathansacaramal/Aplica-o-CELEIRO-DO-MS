@@ -15,6 +15,7 @@ const existing = new EventEntity({
   id: 3,
   cityId: 1,
   citySlug: "cg",
+  slug: "fest",
   name: "Fest",
   description: "D",
   category: "show",

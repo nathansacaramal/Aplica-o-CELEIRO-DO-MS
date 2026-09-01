@@ -115,15 +115,29 @@ export function AdminHomeHighlightsPage(): ReactElement {
         return;
       }
 
-      // O link do botão é derivado do evento/ponto turístico selecionado —
-      // nunca deixado em branco (isso já causou destaques com um link de
-      // exemplo/quebrado em produção).
-      const derivedCtaUrl: string =
-        formState.type === "event"
-          ? `/eventos/${refTrim}`
-          : formState.type === "tourist-point"
-            ? `/pontos-turisticos/${refTrim}`
-            : (formState.ctaUrl?.trim() ?? "");
+      // O link do botão é derivado do slug do evento/ponto turístico
+      // selecionado (não do id) — a URL pública navega por slug, então usar o
+      // id aqui geraria um link quebrado assim que o usuário clicasse.
+      let derivedCtaUrl: string = formState.ctaUrl?.trim() ?? "";
+      if (formState.type === "event") {
+        const selected = await adminApiClient.getEventById(Number(refTrim));
+        if (!selected) {
+          setError("Evento selecionado não foi encontrado. Selecione novamente.");
+          return;
+        }
+        derivedCtaUrl = `/eventos/${selected.slug}`;
+      } else if (formState.type === "tourist-point") {
+        const selected = await adminApiClient.getTouristPointById(
+          Number(refTrim),
+        );
+        if (!selected) {
+          setError(
+            "Ponto turístico selecionado não foi encontrado. Selecione novamente.",
+          );
+          return;
+        }
+        derivedCtaUrl = `/pontos-turisticos/${selected.slug}`;
+      }
 
       const input: ICreateHomeHighlightInput = {
         type: formState.type,

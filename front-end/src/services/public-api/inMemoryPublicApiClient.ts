@@ -126,6 +126,18 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
       return event;
     },
 
+    async getPublishedEventBySlug(slug: string): Promise<IEvent | null> {
+      const event: IEvent | undefined = getEventsMock().find(
+        (item: IEvent) => item.slug === slug,
+      );
+
+      if (!event || !event.published) {
+        return null;
+      }
+
+      return event;
+    },
+
     async listPublishedEventByCityId(cityId: number): Promise<IEvent[] | null> {
       const events: IEvent[] = getEventsMock();
       return events.filter(
@@ -164,6 +176,21 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
     ): Promise<ITouristPoint | null> {
       const touristPoint: ITouristPoint | undefined =
         getTouristPointsMock().find((item: ITouristPoint) => item.id === id);
+
+      if (!touristPoint || !touristPoint.published) {
+        return null;
+      }
+
+      return touristPoint;
+    },
+
+    async getPublishedTouristPointBySlug(
+      slug: string,
+    ): Promise<ITouristPoint | null> {
+      const touristPoint: ITouristPoint | undefined =
+        getTouristPointsMock().find(
+          (item: ITouristPoint) => item.slug === slug,
+        );
 
       if (!touristPoint || !touristPoint.published) {
         return null;

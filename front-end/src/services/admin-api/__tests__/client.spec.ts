@@ -247,6 +247,7 @@ describe("adminApiClient", () => {
       const createdItem = await adminApiClient.createEvent({
         cityId: 1,
         citySlug: "dourados",
+        slug: "evento-teste",
         name: "Evento Teste",
         description: "Descrição do evento teste",
         category: "teatro",
@@ -325,6 +326,7 @@ describe("adminApiClient", () => {
       const createdItem = await adminApiClient.createTouristPoint({
         cityId: 1,
         citySlug: "dourados",
+        slug: "ponto-teste",
         name: "Ponto Teste",
         description: "Descrição do ponto teste",
         category: "parque",

@@ -8,6 +8,7 @@ export function eventModelToEntity(m: EventModel): EventEntity {
     id: m.id,
     cityId: m.cityId,
     citySlug: m.citySlug,
+    slug: m.slug,
     name: m.name,
     description: m.description,
     category,

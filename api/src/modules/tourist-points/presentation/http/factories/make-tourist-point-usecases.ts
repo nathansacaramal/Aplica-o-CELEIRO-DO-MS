@@ -1,6 +1,7 @@
 import { CreateTouristPointUseCase } from "@/modules/tourist-points/application/use-cases/create-tourist-point.usecase";
 import { DeleteTouristPointUseCase } from "@/modules/tourist-points/application/use-cases/delete-tourist-point.usecase";
 import { GetTouristPointByIdUseCase } from "@/modules/tourist-points/application/use-cases/get-tourist-point-by-id.usecase";
+import { FindTouristPointBySlugUseCase } from "@/modules/tourist-points/application/use-cases/find-tourist-point-by-slug.usecase";
 import { ListTouristPointsUseCase } from "@/modules/tourist-points/application/use-cases/list-tourist-points.usecase";
 import { UpdateTouristPointUseCase } from "@/modules/tourist-points/application/use-cases/update-tourist-point.usecase";
 import { SequelizeTouristPointRepository } from "@/modules/tourist-points/infra/sequelize/sequelize-tourist-point.repository";
@@ -20,6 +21,11 @@ export function makeListTouristPointsUseCase() {
 export function makeGetTouristPointByIdUseCase() {
   const repo = new SequelizeTouristPointRepository();
   return new GetTouristPointByIdUseCase(repo);
+}
+
+export function makeFindTouristPointBySlugUseCase() {
+  const repo = new SequelizeTouristPointRepository();
+  return new FindTouristPointBySlugUseCase(repo);
 }
 
 export function makeUpdateTouristPointUseCase() {

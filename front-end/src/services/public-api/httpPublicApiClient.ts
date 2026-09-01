@@ -103,7 +103,26 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
 
     async getPublishedEventById(id: number): Promise<IEvent | null> {
       try {
-        const { data } = await http.get<unknown>(`/public/events/${id}`);
+        const { data } = await http.get<unknown>(`/public/events/by-id/${id}`);
+        const raw = unwrapResource<Record<string, unknown>>(data);
+        const event = mapEventFromApi(raw);
+        if (!event.published) {
+          return null;
+        }
+        return event;
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) {
+          return null;
+        }
+        throw toApiError(error);
+      }
+    },
+
+    async getPublishedEventBySlug(slug: string): Promise<IEvent | null> {
+      try {
+        const { data } = await http.get<unknown>(
+          `/public/events/${encodeURIComponent(slug)}`,
+        );
         const raw = unwrapResource<Record<string, unknown>>(data);
         const event = mapEventFromApi(raw);
         if (!event.published) {
@@ -170,7 +189,28 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
     ): Promise<ITouristPoint | null> {
       try {
         const { data } = await http.get<unknown>(
-          `/public/tourist-points/${id}`,
+          `/public/tourist-points/by-id/${id}`,
+        );
+        const raw = unwrapResource<Record<string, unknown>>(data);
+        const point = mapTouristPointFromApi(raw);
+        if (!point.published) {
+          return null;
+        }
+        return point;
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) {
+          return null;
+        }
+        throw toApiError(error);
+      }
+    },
+
+    async getPublishedTouristPointBySlug(
+      slug: string,
+    ): Promise<ITouristPoint | null> {
+      try {
+        const { data } = await http.get<unknown>(
+          `/public/tourist-points/${encodeURIComponent(slug)}`,
         );
         const raw = unwrapResource<Record<string, unknown>>(data);
         const point = mapTouristPointFromApi(raw);

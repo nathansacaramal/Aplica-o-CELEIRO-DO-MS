@@ -41,10 +41,10 @@ export function AppRoutes(): ReactElement | null {
       children: [
         { index: true, element: <HomePage /> },
         { path: "eventos", element: <EventosPage /> },
-        { path: "eventos/:id", element: <EventoDetailsPage /> },
+        { path: "eventos/:slug", element: <EventoDetailsPage /> },
         { path: "pontos-turisticos", element: <PontosTuristicosPage /> },
         {
-          path: "pontos-turisticos/:id",
+          path: "pontos-turisticos/:slug",
           element: <PontoTuristicoDetailsPage />,
         },
         { path: "cidades", element: <CidadesPage /> },

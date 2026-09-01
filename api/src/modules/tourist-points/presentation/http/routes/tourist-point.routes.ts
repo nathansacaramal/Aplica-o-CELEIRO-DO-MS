@@ -8,6 +8,7 @@ import { Router } from "express";
 import {
   makeCreateTouristPointController,
   makeDeleteTouristPointController,
+  makeFindTouristPointBySlugController,
   makeGetTouristPointByIdController,
   makeListTouristPointsController,
   makeUpdateTouristPointController,
@@ -58,5 +59,15 @@ export function registerTouristPointsRoutes(router: Router) {
     validateQuery(listTouristPointsQuerySchema),
     adaptRoute(makeListTouristPointsController("public")),
   );
-  router.get("/public/tourist-points/:id", adaptRoute(makeGetTouristPointByIdController("public")));
+  // Rota pública por id fica sob /by-id/ para não colidir com
+  // /public/tourist-points/:slug (usada internamente, ex.: resolver destaques
+  // da home a partir do referenceId).
+  router.get(
+    "/public/tourist-points/by-id/:id",
+    adaptRoute(makeGetTouristPointByIdController("public")),
+  );
+  router.get(
+    "/public/tourist-points/:slug",
+    adaptRoute(makeFindTouristPointBySlugController()),
+  );
 }

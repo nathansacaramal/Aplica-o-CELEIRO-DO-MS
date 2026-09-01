@@ -23,7 +23,7 @@ function mapEventToCatalogItem(event: IEvent): ICatalogoItem {
     dataLabel: event.formattedDate,
     localLabel: event.location,
     destaque: event.featured,
-    href: `/eventos/${event.id}`,
+    href: `/eventos/${event.slug}`,
     ctaLabel: "Ver evento",
   };
 }

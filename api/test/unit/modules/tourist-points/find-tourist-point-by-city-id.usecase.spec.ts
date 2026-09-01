@@ -7,6 +7,7 @@ describe("FindTouristPointByCityIdUseCase", () => {
     id: 1,
     cityId: 9,
     citySlug: "cg",
+    slug: "museu",
     name: "Museu",
     description: "D",
     category: "museu",
