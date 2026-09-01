@@ -309,6 +309,97 @@ describe("adminApiClient", () => {
     });
   });
 
+  describe("blog", () => {
+    it("deve listar, buscar por id, criar, atualizar e excluir publicações", async () => {
+      const adminApiClient = await loadAdminApiClient();
+
+      const initialItems = await adminApiClient.listBlogPosts();
+      const initialCount = initialItems.length;
+
+      expect(initialItems.length).toBeGreaterThan(0);
+
+      const firstItem = initialItems[0];
+      const foundById = await adminApiClient.getBlogPostById(firstItem.id);
+
+      expect(foundById?.id).toBe(firstItem.id);
+
+      const createdItem = await adminApiClient.createBlogPost({
+        titulo: "Publicação de Teste",
+        conteudo: "<p>Conteúdo de teste</p>",
+        status: "draft",
+        imagemDestacadaUrl: "/images/blog/post-teste.jpg",
+      });
+
+      expect(createdItem.id).toBeTruthy();
+      expect(createdItem.titulo).toBe("Publicação de Teste");
+      expect(createdItem.slug).toBe("publicacao-de-teste");
+      expect(createdItem.resumo).toBe("Conteúdo de teste");
+
+      const afterCreate = await adminApiClient.listBlogPosts();
+
+      expect(afterCreate).toHaveLength(initialCount + 1);
+
+      const updatedItem = await adminApiClient.updateBlogPost({
+        id: createdItem.id,
+        titulo: "Publicação de Teste Atualizada",
+        status: "published",
+      });
+
+      expect(updatedItem.titulo).toBe("Publicação de Teste Atualizada");
+      expect(updatedItem.status).toBe("published");
+      expect(updatedItem.dataPublicacao).toBeTruthy();
+
+      const persisted = await adminApiClient.getBlogPostById(createdItem.id);
+
+      expect(persisted?.titulo).toBe("Publicação de Teste Atualizada");
+      expect(persisted?.status).toBe("published");
+
+      await adminApiClient.deleteBlogPost(createdItem.id);
+
+      const afterDelete = await adminApiClient.listBlogPosts();
+
+      expect(afterDelete).toHaveLength(initialCount);
+      expect(afterDelete.some((item) => item.id === createdItem.id)).toBe(false);
+    });
+
+    it("deve gerar slugs únicos sufixando -2 em caso de colisão de título", async () => {
+      const adminApiClient = await loadAdminApiClient();
+
+      const first = await adminApiClient.createBlogPost({
+        titulo: "Título Repetido",
+        conteudo: "<p>A</p>",
+        status: "draft",
+        imagemDestacadaUrl: "/images/blog/a.jpg",
+      });
+      const second = await adminApiClient.createBlogPost({
+        titulo: "Título Repetido",
+        conteudo: "<p>B</p>",
+        status: "draft",
+        imagemDestacadaUrl: "/images/blog/b.jpg",
+      });
+
+      expect(first.slug).toBe("titulo-repetido");
+      expect(second.slug).toBe("titulo-repetido-2");
+    });
+
+    it("deve retornar null ao buscar publicação inexistente", async () => {
+      const adminApiClient = await loadAdminApiClient();
+
+      expect(await adminApiClient.getBlogPostById(999999)).toBeNull();
+    });
+
+    it("deve lançar erro ao atualizar publicação inexistente", async () => {
+      const adminApiClient = await loadAdminApiClient();
+
+      await expect(
+        adminApiClient.updateBlogPost({
+          id: 999999,
+          titulo: "Publicação inexistente",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("tourist points", () => {
     it("deve listar, buscar por id, criar, atualizar e excluir pontos turísticos", async () => {
       const adminApiClient = await loadAdminApiClient();

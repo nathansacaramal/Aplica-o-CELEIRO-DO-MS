@@ -1,3 +1,4 @@
+import type { IBlogPost } from "@/entities/blog-post/blogPost.types";
 import type { ICity } from "@/entities/city/city.types";
 import type { IEvent } from "@/entities/event/event.types";
 import type { IInstitutionalContent } from "@/entities/institutional/institutional.types";
@@ -10,6 +11,7 @@ import {
   type ISiteLogoValue,
 } from "@/entities/settings/settings.types";
 import {
+  getBlogPostsMock,
   getCitiesMock,
   getEventsMock,
   getHomeHighlightsMock,
@@ -261,6 +263,30 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
           ? value.url
           : DEFAULT_SITE_LOGO_URL;
       return { url };
+    },
+
+    async listLatestPublishedBlogPosts(limit: number = 12): Promise<IBlogPost[]> {
+      const posts: IBlogPost[] = getBlogPostsMock().filter(
+        (item: IBlogPost) => item.status === "published",
+      );
+      const sorted = [...posts].sort((a, b) => {
+        const ta = new Date(a.dataPublicacao ?? a.createdAt).getTime();
+        const tb = new Date(b.dataPublicacao ?? b.createdAt).getTime();
+        return tb - ta;
+      });
+      return sorted.slice(0, limit);
+    },
+
+    async getPublishedBlogPostBySlug(slug: string): Promise<IBlogPost | null> {
+      const post: IBlogPost | undefined = getBlogPostsMock().find(
+        (item: IBlogPost) => item.slug === slug,
+      );
+
+      if (!post || post.status !== "published") {
+        return null;
+      }
+
+      return post;
     },
   };
 }

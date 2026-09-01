@@ -8,7 +8,11 @@ import type {
   ISocialLink,
   IUpdateSocialLinkInput,
 } from "@/entities/social-link/socialLink.types";
-import type { IAdminApiClient, IAdminListPickQuery } from "./adminApi.types";
+import type {
+  IAdminApiClient,
+  IAdminBlogPostsListQuery,
+  IAdminListPickQuery,
+} from "./adminApi.types";
 import {
   adminMockDelay,
   getInstitutionalContentMock,
@@ -27,8 +31,16 @@ import {
   setHomeHighlightsMock,
   getSiteSettingsMock,
   setSiteSettingsMock,
+  getBlogPostsMock,
+  setBlogPostsMock,
 } from "@/services/in-memory/mock-data";
 import type { ISiteSetting } from "@/entities/settings/settings.types";
+import type {
+  IBlogPost,
+  ICreateBlogPostInput,
+  IUpdateBlogPostInput,
+} from "@/entities/blog-post/blogPost.types";
+import { slugify } from "@/domains/admin-cms/utils/slugify";
 
 import type {
   ICity,
@@ -53,6 +65,43 @@ import type {
   IHomeHighlight,
   IUpdateHomeHighlightInput,
 } from "@/entities/home-content/homeContent.types";
+
+function extractExcerptPreview(html: string): string {
+  const text = html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\s+([.,;:!?])/g, "$1")
+    .trim();
+  return text.length <= 220 ? text : `${text.slice(0, 220).trimEnd()}…`;
+}
+
+function generateUniqueBlogSlugMock(titulo: string, items: IBlogPost[]): string {
+  const base = slugify(titulo) || "publicacao";
+  const taken = new Set(items.map((item) => item.slug));
+  let candidate = base;
+  let counter = 2;
+  while (taken.has(candidate)) {
+    candidate = `${base}-${counter}`;
+    counter += 1;
+  }
+  return candidate;
+}
+
+function filterBlogPostsMock(items: IBlogPost[], query?: IAdminBlogPostsListQuery): IBlogPost[] {
+  let out: IBlogPost[] = [...items].sort((a, b) => {
+    const ta = new Date(a.dataPublicacao ?? a.createdAt).getTime();
+    const tb = new Date(b.dataPublicacao ?? b.createdAt).getTime();
+    return tb - ta;
+  });
+  if (query?.status) {
+    out = out.filter((item) => item.status === query.status);
+  }
+  if (query?.titulo?.trim()) {
+    const s = query.titulo.trim().toLowerCase();
+    out = out.filter((item) => item.titulo.toLowerCase().includes(s));
+  }
+  return out;
+}
 
 function filterEventsForPick(
   items: IEvent[],
@@ -366,6 +415,93 @@ export function createInMemoryAdminApiClient(): IAdminApiClient {
       );
 
       setEventsMock(nextItems);
+    },
+
+    async listBlogPosts(query?: IAdminBlogPostsListQuery): Promise<IBlogPost[]> {
+      await adminMockDelay();
+      return filterBlogPostsMock(getBlogPostsMock(), query);
+    },
+
+    async getBlogPostById(id: number): Promise<IBlogPost | null> {
+      await adminMockDelay();
+      const found = getBlogPostsMock().find((item) => item.id === id);
+      return found ?? null;
+    },
+
+    async createBlogPost(input: ICreateBlogPostInput): Promise<IBlogPost> {
+      await adminMockDelay();
+
+      const currentItems: IBlogPost[] = getBlogPostsMock();
+      const slug = generateUniqueBlogSlugMock(input.titulo, currentItems);
+      const resumo = extractExcerptPreview(input.conteudo);
+      const now = new Date().toISOString();
+
+      const nextItem: IBlogPost = {
+        id: Math.random(),
+        titulo: input.titulo,
+        slug,
+        resumo,
+        conteudo: input.conteudo,
+        imagemDestaque: input.imagemDestacadaUrl.trim(),
+        status: input.status,
+        dataPublicacao: input.dataPublicacao ?? now,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      setBlogPostsMock([...currentItems, nextItem]);
+
+      return nextItem;
+    },
+
+    async updateBlogPost(input: IUpdateBlogPostInput): Promise<IBlogPost> {
+      await adminMockDelay();
+
+      const currentItems: IBlogPost[] = getBlogPostsMock();
+      const currentItem: IBlogPost | undefined = currentItems.find(
+        (item) => item.id === input.id,
+      );
+
+      if (!currentItem) {
+        throw new Error("Publicação não encontrada.");
+      }
+
+      const conteudo = input.conteudo ?? currentItem.conteudo;
+      const willPublishNow =
+        input.status === "published" &&
+        currentItem.status !== "published" &&
+        input.dataPublicacao === undefined;
+
+      const nextItem: IBlogPost = {
+        ...currentItem,
+        titulo: input.titulo ?? currentItem.titulo,
+        conteudo,
+        resumo: input.conteudo !== undefined ? extractExcerptPreview(conteudo) : currentItem.resumo,
+        status: input.status ?? currentItem.status,
+        dataPublicacao: willPublishNow
+          ? new Date().toISOString()
+          : (input.dataPublicacao ?? currentItem.dataPublicacao),
+        imagemDestaque:
+          input.imagemDestacadaUrl?.trim() ? input.imagemDestacadaUrl.trim() : currentItem.imagemDestaque,
+        updatedAt: new Date().toISOString(),
+      };
+
+      const nextItems: IBlogPost[] = currentItems.map((item) =>
+        item.id === input.id ? nextItem : item,
+      );
+
+      setBlogPostsMock(nextItems);
+
+      return nextItem;
+    },
+
+    async deleteBlogPost(id: number): Promise<void> {
+      await adminMockDelay();
+
+      const currentItems: IBlogPost[] = getBlogPostsMock();
+      const nextItems: IBlogPost[] = currentItems.filter((item) => item.id !== id);
+
+      setBlogPostsMock(nextItems);
     },
 
     async listTouristPoints(): Promise<ITouristPoint[]> {

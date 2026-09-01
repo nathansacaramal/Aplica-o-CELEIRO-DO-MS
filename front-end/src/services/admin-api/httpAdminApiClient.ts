@@ -19,6 +19,11 @@ import type {
   IUpdateEventInput,
 } from "@/entities/event/event.types";
 import type {
+  IBlogPost,
+  ICreateBlogPostInput,
+  IUpdateBlogPostInput,
+} from "@/entities/blog-post/blogPost.types";
+import type {
   ICreateTouristPointInput,
   ITouristPoint,
   IUpdateTouristPointInput,
@@ -29,7 +34,11 @@ import type {
   IUpdateHomeHighlightInput,
 } from "@/entities/home-content/homeContent.types";
 import type { ISiteSetting } from "@/entities/settings/settings.types";
-import type { IAdminApiClient, IAdminListPickQuery } from "./adminApi.types";
+import type {
+  IAdminApiClient,
+  IAdminBlogPostsListQuery,
+  IAdminListPickQuery,
+} from "./adminApi.types";
 import axios, {
   type AxiosInstance,
   type InternalAxiosRequestConfig,
@@ -38,6 +47,7 @@ import axios, {
 import { toApiError } from "@/services/api/apiError";
 import { unwrapCollection, unwrapResource } from "@/services/api/httpEnvelope";
 import { mapCityFromApi } from "@/services/api/mappers/cityFromApi";
+import { mapBlogPostFromApi } from "@/services/api/mappers/blogPostFromApi";
 import { mapEventFromApi } from "@/services/api/mappers/eventFromApi";
 import { mapHomeHighlightFromApi } from "@/services/api/mappers/homeHighlightFromApi";
 import { mapInstitutionalFromApi } from "@/services/api/mappers/institutionalFromApi";
@@ -441,6 +451,64 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
 
     async deleteEvent(id: number): Promise<void> {
       await http.delete(`/admin/events/${id}`);
+    },
+
+    async listBlogPosts(query?: IAdminBlogPostsListQuery): Promise<IBlogPost[]> {
+      const { data } = await http.get<unknown>("/admin/blog", {
+        params: {
+          page: 1,
+          limit: 100,
+          sortDir: "desc",
+          ...(query?.status !== undefined && { status: query.status }),
+          ...(query?.titulo?.trim() && { titulo: query.titulo.trim() }),
+        },
+      });
+      const { items } = unwrapCollection<Record<string, unknown>>(data);
+      return items.map((row) => mapBlogPostFromApi(row as Record<string, unknown>));
+    },
+
+    async getBlogPostById(id: number): Promise<IBlogPost | null> {
+      try {
+        const { data } = await http.get<unknown>(`/admin/blog/${id}`);
+        return mapBlogPostFromApi(unwrapResource<Record<string, unknown>>(data));
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) {
+          return null;
+        }
+        throw toApiError(error);
+      }
+    },
+
+    async createBlogPost(input: ICreateBlogPostInput): Promise<IBlogPost> {
+      const image = await resolveWebImagePayloadFromImageUrlField(
+        input.imagemDestacadaUrl,
+        "Imagem de destaque da publicação",
+      );
+      const { data } = await http.post<unknown>("/admin/blog", {
+        titulo: input.titulo,
+        conteudo: input.conteudo,
+        status: input.status,
+        ...(input.dataPublicacao !== undefined && { dataPublicacao: input.dataPublicacao }),
+        image,
+      });
+      return mapBlogPostFromApi(unwrapResource<Record<string, unknown>>(data));
+    },
+
+    async updateBlogPost(input: IUpdateBlogPostInput): Promise<IBlogPost> {
+      const { id, imagemDestacadaUrl, ...rest } = input;
+      const body: Record<string, unknown> = { ...rest };
+      if (imagemDestacadaUrl !== undefined && imagemDestacadaUrl.trim() !== "") {
+        body.image = await resolveWebImagePayloadFromImageUrlField(
+          imagemDestacadaUrl,
+          "Imagem de destaque da publicação",
+        );
+      }
+      const { data } = await http.patch<unknown>(`/admin/blog/${id}`, body);
+      return mapBlogPostFromApi(unwrapResource<Record<string, unknown>>(data));
+    },
+
+    async deleteBlogPost(id: number): Promise<void> {
+      await http.delete(`/admin/blog/${id}`);
     },
 
     async listTouristPoints(): Promise<ITouristPoint[]> {

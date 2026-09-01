@@ -2,6 +2,8 @@ import type { ReactElement } from "react";
 import { Navigate, useRoutes } from "react-router-dom";
 
 import {
+  AdminBlogPostFormPageLazy,
+  AdminBlogPostsListPageLazy,
   AdminCitiesListPageLazy,
   AdminCityFormPageLazy,
   AdminDashboardPageLazy,
@@ -29,6 +31,7 @@ import { CidadesPage } from "@/domains/cidades-institucional/pages/CidadesPage";
 import { HoteisPage } from "@/domains/catalogo-publico/hoteis/pages/HoteisPage";
 import { CityDetailsPage } from "@/domains/cidades-institucional/pages/CityDetailsPage";
 import { AboutPage } from "@/domains/institucional/pages/AboutPage";
+import { BlogPostDetailsPage } from "@/domains/catalogo-publico/blog/pages/BlogPostDetailsPage";
 
 import { AdminRouteGuard } from "@/domains/admin-cms/auth/guards/AdminRouteGuard";
 import { PublicNotFoundPage } from "@/shell/public/pages/PublicNotFoundPage";
@@ -51,6 +54,7 @@ export function AppRoutes(): ReactElement | null {
         { path: "cidades/:slug", element: <CityDetailsPage /> },
         { path: "hoteis", element: <HoteisPage /> },
         { path: "sobre", element: <AboutPage /> },
+        { path: "blog/:slug", element: <BlogPostDetailsPage /> },
       ],
     },
     {
@@ -123,6 +127,18 @@ export function AppRoutes(): ReactElement | null {
                 {
                   path: "pontos-turisticos/editar",
                   element: <AdminTouristPointFormPageLazy />,
+                },
+                {
+                  path: "blog",
+                  element: <AdminBlogPostsListPageLazy />,
+                },
+                {
+                  path: "blog/novo",
+                  element: <AdminBlogPostFormPageLazy />,
+                },
+                {
+                  path: "blog/editar",
+                  element: <AdminBlogPostFormPageLazy />,
                 },
               ],
             },
