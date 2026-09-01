@@ -5,6 +5,7 @@ import type { IEvent } from "@/entities/event/event.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
 import type { ISiteSetting } from "@/entities/settings/settings.types";
+import type { IBlogPost } from "@/entities/blog-post/blogPost.types";
 
 let institutionalContentMock: IInstitutionalContent = {
   id: 1,
@@ -263,6 +264,48 @@ let eventsMock: IEvent[] = [
   },
 ];
 
+let blogPostsMock: IBlogPost[] = [
+  {
+    id: 1,
+    titulo: "Festival de Inverno movimenta Nova Andradina",
+    slug: "festival-de-inverno-movimenta-nova-andradina",
+    resumo:
+      "A cidade recebe shows, feira gastronômica e atrações culturais durante todo o fim de semana.",
+    conteudo:
+      "<p>A cidade recebe shows, feira gastronômica e atrações culturais durante todo o fim de semana.</p><p>O evento é gratuito e conta com estrutura completa para toda a família.</p>",
+    imagemDestaque: "/images/highlights/festival-gastronomico.jpg",
+    status: "published",
+    dataPublicacao: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 2,
+    titulo: "Novo roteiro turístico é lançado em Dourados",
+    slug: "novo-roteiro-turistico-e-lancado-em-dourados",
+    resumo: "Roteiro reúne pontos históricos e naturais da cidade em um único passeio guiado.",
+    conteudo:
+      "<p>Roteiro reúne pontos históricos e naturais da cidade em um único passeio guiado.</p><ul><li>Parque Antenor Martins</li><li>Centro histórico</li></ul>",
+    imagemDestaque: "/images/highlights/parque-antenor-martins.jpg",
+    status: "published",
+    dataPublicacao: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 3,
+    titulo: "Rascunho: pauta em apuração",
+    slug: "rascunho-pauta-em-apuracao",
+    resumo: "Conteúdo ainda não publicado.",
+    conteudo: "<p>Conteúdo ainda não publicado.</p>",
+    imagemDestaque: "/images/highlights/feira-cultural-itapora.jpg",
+    status: "draft",
+    dataPublicacao: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
 let touristPointsMock: ITouristPoint[] = [
   {
     id: 1,
@@ -412,4 +455,12 @@ export function getSiteSettingsMock(): ISiteSetting[] {
 
 export function setSiteSettingsMock(nextValue: ISiteSetting[]): void {
   siteSettingsMock = [...nextValue];
+}
+
+export function getBlogPostsMock(): IBlogPost[] {
+  return [...blogPostsMock];
+}
+
+export function setBlogPostsMock(nextValue: IBlogPost[]): void {
+  blogPostsMock = [...nextValue];
 }

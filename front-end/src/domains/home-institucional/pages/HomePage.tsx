@@ -1,4 +1,5 @@
 import { usePublicPageMetadata } from "@/shell/public/seo/usePublicPageMetadata";
+import { LatestBlogPostsSection } from "@/domains/catalogo-publico/blog/components/LatestBlogPostsSection";
 import type { ReactElement } from "react";
 import { HomeHeroCarousel } from "../components/HomeHeroCarousel";
 import { CeleiroIntroSection } from "../components/CeleiroIntroSection";
@@ -15,6 +16,7 @@ export function HomePage(): ReactElement {
   return (
     <div className="bg-portal">
       <HomeHeroCarousel />
+      <LatestBlogPostsSection />
       <CeleiroIntroSection />
       <CitiesGridSection />
     </div>

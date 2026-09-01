@@ -1,3 +1,4 @@
+import type { IBlogPost } from "@/entities/blog-post/blogPost.types";
 import type { ICity } from "@/entities/city/city.types";
 import type { IEvent } from "@/entities/event/event.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
@@ -70,4 +71,8 @@ export interface IPublicApiClient {
 
   /** Nunca lança: em caso de falha, cai na logo estática atual do site. */
   getSiteLogo: () => Promise<ISiteLogoValue>;
+
+  /** Seção "Últimas publicações" da home. Nunca lança: em caso de falha, retorna lista vazia. */
+  listLatestPublishedBlogPosts: (limit?: number) => Promise<IBlogPost[]>;
+  getPublishedBlogPostBySlug: (slug: string) => Promise<IBlogPost | null>;
 }

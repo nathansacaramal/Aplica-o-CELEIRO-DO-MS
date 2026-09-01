@@ -21,6 +21,11 @@ import type {
   IUpdateEventInput,
 } from "@/entities/event/event.types";
 import type {
+  IBlogPost,
+  ICreateBlogPostInput,
+  IUpdateBlogPostInput,
+} from "@/entities/blog-post/blogPost.types";
+import type {
   ICreateTouristPointInput,
   ITouristPoint,
   IUpdateTouristPointInput,
@@ -32,6 +37,12 @@ import type {
   IUpdateHomeHighlightInput,
 } from "@/entities/home-content/homeContent.types";
 import type { ISiteSetting } from "@/entities/settings/settings.types";
+
+/** Filtros da listagem administrativa de publicações do blog. */
+export interface IAdminBlogPostsListQuery {
+  status?: "draft" | "published";
+  titulo?: string;
+}
 
 /** Filtros para listagens admin usadas em combobox (nome + categoria na query do BFF). */
 export interface IAdminListPickQuery {
@@ -100,4 +111,10 @@ export interface IAdminApiClient {
   updateSetting: (key: string, value: unknown) => Promise<ISiteSetting>;
   /** Substitui a logo do site a partir do campo de imagem (data URL ou link http(s)). */
   updateSiteLogo: (imageUrlFieldValue: string) => Promise<ISiteSetting>;
+
+  listBlogPosts: (query?: IAdminBlogPostsListQuery) => Promise<IBlogPost[]>;
+  getBlogPostById: (id: number) => Promise<IBlogPost | null>;
+  createBlogPost: (input: ICreateBlogPostInput) => Promise<IBlogPost>;
+  updateBlogPost: (input: IUpdateBlogPostInput) => Promise<IBlogPost>;
+  deleteBlogPost: (id: number) => Promise<void>;
 }

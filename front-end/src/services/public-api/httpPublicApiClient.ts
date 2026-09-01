@@ -4,6 +4,7 @@
  *
  * Rotas públicas: ver `docs/architecture/frontend-api-integration.md`.
  */
+import type { IBlogPost } from "@/entities/blog-post/blogPost.types";
 import type { ICity } from "@/entities/city/city.types";
 import type { IEvent } from "@/entities/event/event.types";
 import type { IInstitutionalContent } from "@/entities/institutional/institutional.types";
@@ -15,6 +16,7 @@ import {
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import { mapCityFromApi } from "@/services/api/mappers/cityFromApi";
+import { mapBlogPostFromApi } from "@/services/api/mappers/blogPostFromApi";
 import { mapEventFromApi } from "@/services/api/mappers/eventFromApi";
 import { mapInstitutionalFromApi } from "@/services/api/mappers/institutionalFromApi";
 import { mapSocialLinkFromApi } from "@/services/api/mappers/socialLinkFromApi";
@@ -382,6 +384,36 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
       } catch {
         // Falha ao consultar a configuração nunca deve deixar o site sem logo.
         return { url: DEFAULT_SITE_LOGO_URL };
+      }
+    },
+
+    async listLatestPublishedBlogPosts(limit: number = 12): Promise<IBlogPost[]> {
+      try {
+        const { data } = await http.get<unknown>("/public/blog/latest", {
+          params: { limit },
+        });
+        const { items } = unwrapCollection<Record<string, unknown>>(data);
+        return items.map((row) => mapBlogPostFromApi(row));
+      } catch {
+        // A seção "Últimas publicações" nunca deve travar a home.
+        return [];
+      }
+    },
+
+    async getPublishedBlogPostBySlug(slug: string): Promise<IBlogPost | null> {
+      try {
+        const { data } = await http.get<unknown>(`/public/blog/${encodeURIComponent(slug)}`);
+        const raw = unwrapResource<Record<string, unknown>>(data);
+        const post = mapBlogPostFromApi(raw);
+        if (post.status !== "published") {
+          return null;
+        }
+        return post;
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) {
+          return null;
+        }
+        throw toApiError(error);
       }
     },
   };

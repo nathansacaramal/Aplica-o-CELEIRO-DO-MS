@@ -1,4 +1,5 @@
 import { registerAuthRoutes } from "@/modules/auth/presentation/http/routes/auth.routes";
+import { registerBlogPostRoutes } from "@/modules/blog/presentation/http/routes/blog-posts.routes";
 import { registerCityRoutes } from "@/modules/cities/presentation/http/routes/city.routes";
 import { registerEventRoutes } from "@/modules/events/presentation/http/routes/events.routes";
 import { registerHomeContentRoutes } from "@/modules/home-content/presentation/http/routes/home-content.routes";
@@ -26,6 +27,7 @@ export default function setupRoutes(app: Express): void {
   registerCityRoutes(router);
   registerMediaRoutes(router);
   registerEventRoutes(router);
+  registerBlogPostRoutes(router);
   registerSocialLinkRoutes(router);
   registerHomeHighlightsRoutes(router);
   registerInstitutionalContentRoutes(router);

@@ -818,4 +818,96 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
       url: "/celeiro_ms_logo.jpg",
     });
   });
+
+  it("listLatestPublishedBlogPosts busca /public/blog/latest com o limite informado", async () => {
+    mockGet.mockResolvedValueOnce({
+      data: collectionBody([
+        {
+          id: 1,
+          titulo: "Post",
+          slug: "post",
+          resumo: "R",
+          conteudo: "<p>C</p>",
+          imagemDestaque: "https://x.com/i.jpg",
+          status: "published",
+          dataPublicacao: "2026-01-01T00:00:00.000Z",
+          createdAt: "2026-01-01T00:00:00.000Z",
+          updatedAt: "2026-01-01T00:00:00.000Z",
+        },
+      ]),
+    });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    const posts = await client.listLatestPublishedBlogPosts(12);
+
+    expect(posts).toHaveLength(1);
+    expect(posts[0]).toMatchObject({ slug: "post", status: "published" });
+    expect(mockGet).toHaveBeenCalledWith("/public/blog/latest", { params: { limit: 12 } });
+  });
+
+  it("listLatestPublishedBlogPosts nunca lança: retorna lista vazia quando a requisição falha", async () => {
+    mockGet.mockRejectedValueOnce(new Error("network down"));
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.listLatestPublishedBlogPosts()).toEqual([]);
+  });
+
+  it("getPublishedBlogPostBySlug retorna post publicado ou null (404 / rascunho)", async () => {
+    const client = createHttpPublicApiClient("https://x/api");
+
+    mockGet.mockResolvedValueOnce({
+      data: resourceBody({
+        id: 1,
+        titulo: "Post",
+        slug: "post",
+        resumo: "R",
+        conteudo: "<p>C</p>",
+        status: "published",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      }),
+    });
+    await expect(client.getPublishedBlogPostBySlug("post")).resolves.toMatchObject({
+      slug: "post",
+      status: "published",
+    });
+    expect(mockGet).toHaveBeenCalledWith("/public/blog/post");
+
+    mockGet.mockRejectedValueOnce({ isAxiosError: true, response: { status: 404 } });
+    await expect(client.getPublishedBlogPostBySlug("inexistente")).resolves.toBeNull();
+  });
+
+  it("getPublishedBlogPostBySlug retorna null quando o post não está publicado", async () => {
+    mockGet.mockResolvedValueOnce({
+      data: resourceBody({
+        id: 1,
+        titulo: "Post",
+        slug: "rascunho",
+        resumo: "R",
+        conteudo: "<p>C</p>",
+        status: "draft",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      }),
+    });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    await expect(client.getPublishedBlogPostBySlug("rascunho")).resolves.toBeNull();
+  });
+
+  it("getPublishedBlogPostBySlug propaga falha que não é 404", async () => {
+    const axiosErr = new AxiosError("falha");
+    axiosErr.response = {
+      status: 500,
+      data: {},
+      statusText: "",
+      headers: {},
+      config: {} as InternalAxiosRequestConfig,
+    };
+    mockGet.mockRejectedValueOnce(axiosErr);
+    const client = createHttpPublicApiClient("https://x/api");
+    await expect(client.getPublishedBlogPostBySlug("post")).rejects.toSatisfy(
+      (e: unknown) => ApiError.isApiError(e) && e.status === 500,
+    );
+  });
 });

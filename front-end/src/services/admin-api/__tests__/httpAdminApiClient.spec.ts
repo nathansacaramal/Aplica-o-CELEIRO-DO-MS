@@ -99,6 +99,21 @@ function eventRow(id: number): Record<string, unknown> {
   };
 }
 
+function blogPostRow(id: number): Record<string, unknown> {
+  return {
+    id,
+    titulo: "Publicação",
+    slug: "publicacao",
+    resumo: "Resumo",
+    conteudo: "<p>Conteúdo</p>",
+    imagemDestaque: "https://x/img.jpg",
+    status: "draft",
+    dataPublicacao: ISO,
+    createdAt: ISO,
+    updatedAt: ISO,
+  };
+}
+
 function touristPointRow(id: number): Record<string, unknown> {
   return {
     id,
@@ -686,6 +701,93 @@ describe("createHttpAdminApiClient", () => {
       await client.deleteEvent(3);
 
       expect(mockHandles.del).toHaveBeenCalledWith("/admin/events/3");
+    });
+  });
+
+  describe("blog", () => {
+    it("listBlogPosts usa paginação fixa e repassa filtros", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.get.mockResolvedValue({ data: collectionBody([]) });
+
+      await client.listBlogPosts({ status: "published", titulo: "fest" });
+
+      expect(mockHandles.get).toHaveBeenCalledWith("/admin/blog", {
+        params: { page: 1, limit: 100, sortDir: "desc", status: "published", titulo: "fest" },
+      });
+    });
+
+    it("getBlogPostById mapeia recurso", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.get.mockResolvedValue({ data: resourceBody(blogPostRow(8)) });
+
+      const post = await client.getBlogPostById(8);
+
+      expect(post?.id).toBe(8);
+    });
+
+    it("getBlogPostById retorna null em 404", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.get.mockRejectedValue(buildAxiosError(404, "/admin/blog/8"));
+
+      await expect(client.getBlogPostById(8)).resolves.toBeNull();
+    });
+
+    it("createBlogPost envia imagem resolvida e não envia slug/resumo", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.post.mockResolvedValue({ data: resourceBody(blogPostRow(1)) });
+
+      await client.createBlogPost({
+        titulo: "T",
+        conteudo: "<p>C</p>",
+        status: "draft",
+        imagemDestacadaUrl: "data:image/jpeg;base64,xx",
+      });
+
+      expect(mockHandles.post).toHaveBeenCalledWith(
+        "/admin/blog",
+        expect.objectContaining({ titulo: "T", conteudo: "<p>C</p>", image: expect.any(Object) }),
+      );
+      const body = mockHandles.post.mock.calls[0]?.[1] as Record<string, unknown>;
+      expect(body.slug).toBeUndefined();
+      expect(body.resumo).toBeUndefined();
+    });
+
+    it("updateBlogPost troca imagemDestacadaUrl por image quando informada", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.patch.mockResolvedValue({ data: resourceBody(blogPostRow(1)) });
+
+      await client.updateBlogPost({
+        id: 1,
+        titulo: "N",
+        imagemDestacadaUrl: "https://img",
+      });
+
+      expect(mockHandles.patch).toHaveBeenCalledWith(
+        "/admin/blog/1",
+        expect.objectContaining({ image: expect.any(Object), titulo: "N" }),
+      );
+      const body = mockHandles.patch.mock.calls[0]?.[1] as Record<string, unknown>;
+      expect(body.imagemDestacadaUrl).toBeUndefined();
+    });
+
+    it("updateBlogPost não envia image quando imagemDestacadaUrl é omitida", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.patch.mockResolvedValue({ data: resourceBody(blogPostRow(1)) });
+
+      await client.updateBlogPost({ id: 1, status: "published" });
+
+      const body = mockHandles.patch.mock.calls[0]?.[1] as Record<string, unknown>;
+      expect(body.image).toBeUndefined();
+      expect(body.status).toBe("published");
+    });
+
+    it("deleteBlogPost chama DELETE", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.del.mockResolvedValue({ data: {} });
+
+      await client.deleteBlogPost(3);
+
+      expect(mockHandles.del).toHaveBeenCalledWith("/admin/blog/3");
     });
   });
 

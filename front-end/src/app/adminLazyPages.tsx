@@ -71,3 +71,15 @@ export const AdminSettingsPageLazy = lazy(() =>
     default: m.AdminSettingsPage,
   })),
 );
+
+export const AdminBlogPostsListPageLazy = lazy(() =>
+  import("@/domains/admin-cms/blog/pages/AdminBlogPostsListPage").then((m) => ({
+    default: m.AdminBlogPostsListPage,
+  })),
+);
+
+export const AdminBlogPostFormPageLazy = lazy(() =>
+  import("@/domains/admin-cms/blog/pages/AdminBlogPostFormPage").then((m) => ({
+    default: m.AdminBlogPostFormPage,
+  })),
+);
