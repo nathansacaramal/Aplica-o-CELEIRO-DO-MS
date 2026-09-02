@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
-import { Section, SectionHeader } from "@/design-system/ui";
+import { Link } from "react-router-dom";
+import { Button, Section, SectionHeader } from "@/design-system/ui";
 import { useLatestBlogPosts } from "@/domains/catalogo-publico/blog/hooks/useLatestBlogPosts";
 import { BlogPostCard } from "./BlogPostCard";
 
@@ -16,13 +17,23 @@ export function LatestBlogPostsSection(): ReactElement | null {
 
   return (
     <Section spacing="xl">
-      <SectionHeader
-        kicker="Blog"
-        tone="primary"
-        description="Novidades, eventos e histórias do Celeiro do MS."
-      >
-        Últimas publicações
-      </SectionHeader>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <SectionHeader
+          kicker="Blog"
+          tone="primary"
+          description="Novidades, eventos e histórias do Celeiro do MS."
+        >
+          Últimas publicações
+        </SectionHeader>
+
+        {!isLoading ? (
+          <Link to="/blog" className="shrink-0">
+            <Button variant="ghost" size="sm">
+              Ver todas as publicações
+            </Button>
+          </Link>
+        ) : null}
+      </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {isLoading

@@ -75,4 +75,8 @@ export interface IPublicApiClient {
   /** Seção "Últimas publicações" da home. Nunca lança: em caso de falha, retorna lista vazia. */
   listLatestPublishedBlogPosts: (limit?: number) => Promise<IBlogPost[]>;
   getPublishedBlogPostBySlug: (slug: string) => Promise<IBlogPost | null>;
+  /** Listagem paginada para a página `/blog` (todas as publicações). */
+  listPublishedBlogPosts: (
+    params: Pick<IPublicListParams, "page" | "limit" | "signal">,
+  ) => Promise<IPublicListResponse<IBlogPost>>;
 }

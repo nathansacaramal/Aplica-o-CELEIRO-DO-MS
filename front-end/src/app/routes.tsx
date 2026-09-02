@@ -31,6 +31,7 @@ import { CidadesPage } from "@/domains/cidades-institucional/pages/CidadesPage";
 import { HoteisPage } from "@/domains/catalogo-publico/hoteis/pages/HoteisPage";
 import { CityDetailsPage } from "@/domains/cidades-institucional/pages/CityDetailsPage";
 import { AboutPage } from "@/domains/institucional/pages/AboutPage";
+import { BlogListPage } from "@/domains/catalogo-publico/blog/pages/BlogListPage";
 import { BlogPostDetailsPage } from "@/domains/catalogo-publico/blog/pages/BlogPostDetailsPage";
 
 import { AdminRouteGuard } from "@/domains/admin-cms/auth/guards/AdminRouteGuard";
@@ -54,6 +55,7 @@ export function AppRoutes(): ReactElement | null {
         { path: "cidades/:slug", element: <CityDetailsPage /> },
         { path: "hoteis", element: <HoteisPage /> },
         { path: "sobre", element: <AboutPage /> },
+        { path: "blog", element: <BlogListPage /> },
         { path: "blog/:slug", element: <BlogPostDetailsPage /> },
       ],
     },

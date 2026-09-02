@@ -895,6 +895,37 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
     await expect(client.getPublishedBlogPostBySlug("rascunho")).resolves.toBeNull();
   });
 
+  it("listPublishedBlogPosts busca /public/blog paginado", async () => {
+    mockGet.mockResolvedValueOnce({
+      data: collectionBody(
+        [
+          {
+            id: 1,
+            titulo: "Post",
+            slug: "post",
+            resumo: "R",
+            conteudo: "<p>C</p>",
+            status: "published",
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+          },
+        ],
+        { page: 2, limit: 12, total: 20, totalPages: 2 },
+      ),
+    });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    const result = await client.listPublishedBlogPosts({ page: 2, limit: 12 });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.total).toBe(20);
+    expect(result.page).toBe(2);
+    expect(mockGet).toHaveBeenCalledWith("/public/blog", {
+      params: { page: 2, limit: 12 },
+      signal: undefined,
+    });
+  });
+
   it("getPublishedBlogPostBySlug propaga falha que não é 404", async () => {
     const axiosErr = new AxiosError("falha");
     axiosErr.response = {

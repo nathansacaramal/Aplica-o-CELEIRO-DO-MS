@@ -32,6 +32,11 @@ describe("TopNav", () => {
       "/eventos",
     );
 
+    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
+      "href",
+      "/blog",
+    );
+
     expect(
       screen.getByRole("link", { name: "Pontos turísticos" }),
     ).toHaveAttribute("href", "/pontos-turisticos");

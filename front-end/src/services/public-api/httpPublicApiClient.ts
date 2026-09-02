@@ -400,6 +400,22 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
       }
     },
 
+    async listPublishedBlogPosts(
+      params: Pick<IPublicListParams, "page" | "limit" | "signal">,
+    ): Promise<IPublicListResponse<IBlogPost>> {
+      const { data } = await http.get<unknown>("/public/blog", {
+        params: { page: params.page ?? 1, limit: params.limit ?? 12 },
+        signal: params.signal,
+      });
+      const parsed = unwrapCollection<Record<string, unknown>>(data);
+      return {
+        items: parsed.items.map((row) => mapBlogPostFromApi(row)),
+        total: parsed.total,
+        page: parsed.page,
+        limit: parsed.limit,
+      };
+    },
+
     async getPublishedBlogPostBySlug(slug: string): Promise<IBlogPost | null> {
       try {
         const { data } = await http.get<unknown>(`/public/blog/${encodeURIComponent(slug)}`);

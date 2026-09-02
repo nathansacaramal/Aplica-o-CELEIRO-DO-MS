@@ -277,6 +277,20 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
       return sorted.slice(0, limit);
     },
 
+    async listPublishedBlogPosts(
+      params: Pick<IPublicListParams, "page" | "limit" | "signal">,
+    ): Promise<IPublicListResponse<IBlogPost>> {
+      const posts: IBlogPost[] = getBlogPostsMock().filter(
+        (item: IBlogPost) => item.status === "published",
+      );
+      const sorted = [...posts].sort((a, b) => {
+        const ta = new Date(a.dataPublicacao ?? a.createdAt).getTime();
+        const tb = new Date(b.dataPublicacao ?? b.createdAt).getTime();
+        return tb - ta;
+      });
+      return paginateItems(sorted, params.page, params.limit);
+    },
+
     async getPublishedBlogPostBySlug(slug: string): Promise<IBlogPost | null> {
       const post: IBlogPost | undefined = getBlogPostsMock().find(
         (item: IBlogPost) => item.slug === slug,

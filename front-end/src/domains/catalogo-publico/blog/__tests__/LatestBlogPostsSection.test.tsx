@@ -47,6 +47,9 @@ describe("LatestBlogPostsSection", () => {
     expect(screen.getByText("Segunda publicação")).toBeInTheDocument();
     expect(screen.getByText("Últimas publicações")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Leia mais" })).toHaveLength(2);
+    expect(
+      screen.getByRole("link", { name: "Ver todas as publicações" }),
+    ).toHaveAttribute("href", "/blog");
   });
 
   it("não renderiza nada quando não há publicações publicadas", async () => {
