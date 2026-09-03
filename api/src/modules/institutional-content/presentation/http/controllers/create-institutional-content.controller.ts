@@ -6,6 +6,7 @@ import { created, mapErrorToHttpResponse, ResourceBuilder } from "@/core/http";
 import { logger } from "@/core/config/logger";
 import { AppError } from "@/core/errors-app-error";
 import { institutionalContentLinks } from "../institutional-content-hateoas";
+import { toInstitutionalContentHttpPayload } from "../mappers/institutional-content-response.mapper";
 
 export class CreateInstitutionalContentController implements Controller {
   constructor(private readonly usecase: CreateInstitutionalContentUseCase) {}
@@ -39,21 +40,7 @@ export class CreateInstitutionalContentController implements Controller {
           correlationId,
         );
       }
-      const data = {
-        id: result.id,
-        aboutTitle: result.aboutTitle,
-        aboutText: result.aboutText,
-        whoWeAreTitle: result.whoWeAreTitle,
-        whoWeAreText: result.whoWeAreText,
-        purposeTitle: result.purposeTitle,
-        purposeText: result.purposeText,
-        mission: result.mission,
-        vision: result.vision,
-        valuesJson: result.valuesJson,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt,
-      };
-      const resource = new ResourceBuilder(data)
+      const resource = new ResourceBuilder(toInstitutionalContentHttpPayload(result))
         .addAllLinks(institutionalContentLinks(result.id))
         .addMeta({ correlationId, version: "1.0.0" })
         .build();

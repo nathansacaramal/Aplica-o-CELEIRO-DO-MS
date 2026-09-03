@@ -4,6 +4,7 @@ import { UpdateInstitutionalContentDTO } from "@/modules/institutional-content/a
 import { AppError } from "@/core/errors-app-error";
 import { logger } from "@/core/config/logger";
 import { mapErrorToHttpResponse } from "@/core/http";
+import { toInstitutionalContentHttpPayload } from "../mappers/institutional-content-response.mapper";
 
 export class UpdateInstitutionalContentController implements Controller {
   constructor(private readonly usecase: UpdateInstitutionalContentUseCase) {}
@@ -29,7 +30,9 @@ export class UpdateInstitutionalContentController implements Controller {
       return {
         statusCode: 200,
         body: {
-          data: result,
+          // Achata a entidade: devolver `result` cru mandava `{ props: {...} }`
+          // e o formulário admin lia tudo como undefined (dados "sumiam").
+          data: toInstitutionalContentHttpPayload(result),
           links: {},
           meta: { correlationId, version: "1.0.0" },
         },

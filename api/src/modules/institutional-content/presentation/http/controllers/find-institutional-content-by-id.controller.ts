@@ -7,6 +7,7 @@ import {
   institutionalContentLinks,
   institutionalContentPublicLinks,
 } from "../institutional-content-hateoas";
+import { toInstitutionalContentHttpPayload } from "../mappers/institutional-content-response.mapper";
 
 export type InstitutionalContentByIdAudience = "admin" | "public";
 
@@ -32,23 +33,9 @@ export class FindInstitutionalContentByIdController implements Controller {
           correlationId,
         );
       }
-      const data = {
-        id: result.id,
-        aboutTitle: result.aboutTitle,
-        aboutText: result.aboutText,
-        whoWeAreTitle: result.whoWeAreTitle,
-        whoWeAreText: result.whoWeAreText,
-        purposeTitle: result.purposeTitle,
-        purposeText: result.purposeText,
-        mission: result.mission,
-        vision: result.vision,
-        valuesJson: result.valuesJson,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt,
-      };
       const linkFn =
         this.audience === "public" ? institutionalContentPublicLinks : institutionalContentLinks;
-      const resource = new ResourceBuilder(data)
+      const resource = new ResourceBuilder(toInstitutionalContentHttpPayload(result))
         .addAllLinks(linkFn(result.id))
         .addMeta({ correlationId, version: "1.0.0" })
         .build();

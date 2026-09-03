@@ -119,6 +119,24 @@ describe("UpdateInstitutionalContentController", () => {
       ).statusCode,
     ).not.toBe(200);
   });
+
+  it("devolve os campos achatados no data (não a entidade crua com props)", async () => {
+    // Regressão: quando o use-case retorna a ENTIDADE (com wrapper `props`), a
+    // resposta precisa achatar os campos — senão o formulário admin lê tudo como
+    // undefined e os dados "somem" após salvar.
+    execute.mockResolvedValue(makeEntity(1));
+
+    const res = await sut.handle({
+      correlationId: "c",
+      pathParams: { id: "1" },
+      body: { aboutTitle: "Sobre" },
+    });
+
+    const data = (res.body as { data: Record<string, unknown> }).data;
+    expect(data.props).toBeUndefined();
+    expect(data.aboutTitle).toBe("Sobre");
+    expect(data.updatedAt).toBeInstanceOf(Date);
+  });
 });
 
 describe("DeleteInstitutionalContentController", () => {
