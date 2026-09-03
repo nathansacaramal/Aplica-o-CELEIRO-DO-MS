@@ -45,16 +45,25 @@ describe("auth-schemas", () => {
     }
   });
 
-  it("loginSchema deve falhar com password maior que 8", () => {
+  it("loginSchema deve aceitar password forte (acima de 8 caracteres)", () => {
     const result = loginSchema.safeParse({
       email: "user@mail.com",
-      password: "123456789",
+      password: "SenhaForte!2026",
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("loginSchema deve falhar com password acima de 128 caracteres", () => {
+    const result = loginSchema.safeParse({
+      email: "user@mail.com",
+      password: "a".repeat(129),
     });
 
     expect(result.success).toBe(false);
     if (!result.success) {
       const issue = issueForPath(result.error.issues, "password");
-      expect(issue.message).toBe("A senha deve ter no máximo 8 caracteres");
+      expect(issue.message).toBe("A senha deve ter no máximo 128 caracteres");
     }
   });
 

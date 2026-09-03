@@ -1,10 +1,6 @@
 import { Encrypter } from "@/core/interfaces"; // seu BcryptAdapter respeita essa interface
 import { DomainLogger, NoopDomainLogger } from "@/core/logger/domain-logger";
-import {
-  invalidCredentials,
-  userNotFound,
-  userWithoutRole,
-} from "@/modules/auth/domain/errors/auth-errors";
+import { invalidCredentials, userWithoutRole } from "@/modules/auth/domain/errors/auth-errors";
 import { AuthTokenService } from "@/modules/auth/domain/services/auth-token.service";
 import { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { FindUserByEmailRepository } from "@/modules/users/domain/repositories/find-user-by-email.repository";
@@ -38,11 +34,14 @@ export class LoginUseCase {
 
     const user = await this.findUserByEmailRepo.findByEmail(input.email);
 
+    // Usuário inexistente e senha inválida retornam o MESMO erro (401) de
+    // propósito: mensagens diferentes permitiriam enumerar quais e-mails
+    // existem no sistema (user enumeration).
     if (!user || !user.id) {
       this.logger.info("Usuário não encontrado para login", {
         email: input.email,
       });
-      throw userNotFound(input.email);
+      throw invalidCredentials();
     }
 
     const senhaValida = await this.encrypter.compare(input.password, user.password);

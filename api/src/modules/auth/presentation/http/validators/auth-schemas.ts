@@ -5,7 +5,7 @@ export const loginSchema = z.object({
   password: z
     .string()
     .min(6, { error: "A senha deve ter no minimo 6 caracteres" })
-    .max(8, { error: "A senha deve ter no máximo 8 caracteres" }),
+    .max(128, { error: "A senha deve ter no máximo 128 caracteres" }),
 });
 
 export const loginResponseSchema = z.object({

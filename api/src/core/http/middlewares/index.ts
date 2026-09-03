@@ -1,4 +1,5 @@
 import authMiddleware from "./auth-middleware";
+import { authRateLimiter } from "./auth-rate-limit";
 import authorizeRoles from "./authorize-roles";
 import bodyParser from "./body-parser";
 import contentType from "./content-type";
@@ -11,6 +12,7 @@ import { forceHttpsRedirect } from "./force-https-redirect";
 
 export {
   authMiddleware,
+  authRateLimiter,
   authorizeRoles,
   bodyParser,
   contentType,

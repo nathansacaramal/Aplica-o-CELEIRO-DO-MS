@@ -77,7 +77,9 @@ describe("LoginUseCase", () => {
     });
   });
 
-  it("deve lançar AppError AUTH_USER_NOT_FOUND quando usuário não existir", async () => {
+  it("lança INVALID_CREDENTIALS (mesmo erro da senha errada) quando o usuário não existe", async () => {
+    // Anti user-enumeration: usuário inexistente não pode ser distinguível de
+    // senha inválida — ambos retornam 401 INVALID_CREDENTIALS.
     const { sut, findUserByEmailRepoMock } = makeSut();
 
     (findUserByEmailRepoMock.findByEmail as jest.Mock).mockResolvedValueOnce(null);
@@ -88,9 +90,9 @@ describe("LoginUseCase", () => {
     };
 
     await expect(sut.execute(input)).rejects.toMatchObject<AppError>({
-      code: "AUTH_USER_NOT_FOUND",
-      statusCode: 404,
-      message: `Usuário com e-mail ${input.email} não foi encontrado`,
+      code: "INVALID_CREDENTIALS",
+      statusCode: 401,
+      message: "E-mail ou senha inválidos",
       name: "AppError",
     });
   });
