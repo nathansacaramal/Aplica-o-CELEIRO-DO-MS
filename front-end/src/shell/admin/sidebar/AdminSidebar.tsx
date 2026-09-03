@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 function getLinkClassName(isActive: boolean): string {
   return [
@@ -11,6 +11,13 @@ function getLinkClassName(isActive: boolean): string {
 }
 
 export function AdminSidebar(): ReactElement {
+  const location = useLocation();
+  // "Publicações" (listagem) fica ativo também ao editar um post — editar vem da
+  // listagem —, mas nunca em "Nova publicação", que tem destaque próprio.
+  const isBlogListActive: boolean =
+    location.pathname === "/admin/blog" ||
+    location.pathname.startsWith("/admin/blog/editar");
+
   return (
     <aside className="w-full border-r border-zinc-200 bg-white p-4 md:w-72">
       <div className="mb-6">
@@ -83,27 +90,30 @@ export function AdminSidebar(): ReactElement {
           Mídias sociais
         </NavLink>
 
-        <p className="px-3 pt-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          Blog
-        </p>
+        <div className="mt-4 border-t border-zinc-200 pt-4">
+          <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wider text-[var(--color-primary)]">
+            Blog
+          </p>
 
-        <NavLink
-          to="/admin/blog"
-          className={({ isActive }: { isActive: boolean }) =>
-            getLinkClassName(isActive)
-          }
-        >
-          Publicações
-        </NavLink>
+          <div className="space-y-1 border-l-2 border-[var(--color-primary)]/30 pl-2">
+            <Link
+              to="/admin/blog"
+              aria-current={isBlogListActive ? "page" : undefined}
+              className={getLinkClassName(isBlogListActive)}
+            >
+              Publicações
+            </Link>
 
-        <NavLink
-          to="/admin/blog/novo"
-          className={({ isActive }: { isActive: boolean }) =>
-            getLinkClassName(isActive)
-          }
-        >
-          Nova publicação
-        </NavLink>
+            <NavLink
+              to="/admin/blog/novo"
+              className={({ isActive }: { isActive: boolean }) =>
+                getLinkClassName(isActive)
+              }
+            >
+              Nova publicação
+            </NavLink>
+          </div>
+        </div>
 
         <NavLink
           to="/admin/configuracoes"
