@@ -43,10 +43,31 @@ describe("useAdminDashboardStats", () => {
       touristPointCount: 0,
       homeHighlightCount: 3,
     });
+    expect(result.current.closedEvents).toEqual([]);
     expect(adminApiClient.listCities).toHaveBeenCalledTimes(1);
     expect(adminApiClient.listEvents).toHaveBeenCalledTimes(1);
     expect(adminApiClient.listTouristPoints).toHaveBeenCalledTimes(1);
     expect(adminApiClient.listHomeHighlights).toHaveBeenCalledTimes(1);
+  });
+
+  it("expõe os eventos encerrados calculados a partir da listagem", async () => {
+    const futuro = "2999-01-01";
+    const passado = "2000-01-01";
+    vi.mocked(adminApiClient.listCities).mockResolvedValue([] as never);
+    vi.mocked(adminApiClient.listEvents).mockResolvedValue([
+      { id: 1, name: "Passado", endDate: passado, published: true },
+      { id: 2, name: "Futuro", endDate: futuro, published: true },
+    ] as never);
+    vi.mocked(adminApiClient.listTouristPoints).mockResolvedValue([] as never);
+    vi.mocked(adminApiClient.listHomeHighlights).mockResolvedValue([] as never);
+
+    const { result } = renderHook(() => useAdminDashboardStats());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.closedEvents.map((e) => e.id)).toEqual([1]);
   });
 
   it("expõe erro quando alguma listagem falhar", async () => {
