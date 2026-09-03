@@ -1,9 +1,11 @@
 import type { ReactElement } from "react";
 import { NavLink } from "react-router-dom";
+import { usePublicNav } from "@/domains/public-portal/settings/hooks/usePublicNav";
 import { useSiteLogo } from "@/domains/public-portal/settings/hooks/useSiteLogo";
 
 export function TopNav(): ReactElement {
   const { url: logoUrl } = useSiteLogo();
+  const { items } = usePublicNav();
   const linkBase: string =
     "rounded-xl px-3 py-2 text-sm font-medium transition";
   const linkActive: string = "bg-black/5 text-zinc-900";
@@ -40,59 +42,17 @@ export function TopNav(): ReactElement {
             Home
           </NavLink>
 
-          <NavLink
-            to="/eventos"
-            className={({ isActive }: { isActive: boolean }) =>
-              `${linkBase} ${isActive ? linkActive : linkIdle}`
-            }
-          >
-            Eventos
-          </NavLink>
-
-          <NavLink
-            to="/blog"
-            className={({ isActive }: { isActive: boolean }) =>
-              `${linkBase} ${isActive ? linkActive : linkIdle}`
-            }
-          >
-            Blog
-          </NavLink>
-
-          <NavLink
-            to="/pontos-turisticos"
-            className={({ isActive }: { isActive: boolean }) =>
-              `${linkBase} ${isActive ? linkActive : linkIdle}`
-            }
-          >
-            Pontos turísticos
-          </NavLink>
-
-          <NavLink
-            to="/cidades"
-            className={({ isActive }: { isActive: boolean }) =>
-              `${linkBase} ${isActive ? linkActive : linkIdle}`
-            }
-          >
-            Cidades
-          </NavLink>
-
-          <NavLink
-            to="/hoteis"
-            className={({ isActive }: { isActive: boolean }) =>
-              `${linkBase} ${isActive ? linkActive : linkIdle}`
-            }
-          >
-            Hotéis
-          </NavLink>
-
-          <NavLink
-            to="/sobre"
-            className={({ isActive }: { isActive: boolean }) =>
-              `${linkBase} ${isActive ? linkActive : linkIdle}`
-            }
-          >
-            Sobre
-          </NavLink>
+          {items.map((item) => (
+            <NavLink
+              key={item.id}
+              to={item.path}
+              className={({ isActive }: { isActive: boolean }) =>
+                `${linkBase} ${isActive ? linkActive : linkIdle}`
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
       </div>
     </header>

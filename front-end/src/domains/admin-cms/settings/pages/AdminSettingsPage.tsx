@@ -5,13 +5,19 @@ import {
   type ISiteSetting,
 } from "@/entities/settings/settings.types";
 import { MaintenanceModeCard } from "@/domains/admin-cms/settings/components/MaintenanceModeCard";
+import { PublicNavVisibilityCard } from "@/domains/admin-cms/settings/components/PublicNavVisibilityCard";
 import { SiteLogoCard } from "@/domains/admin-cms/settings/components/SiteLogoCard";
+import {
+  isPublicNavItemId,
+  type PublicNavItemId,
+} from "@/constants/publicNavItems";
 import { useAdminSettings } from "@/domains/admin-cms/settings/hooks/useAdminSettings";
 import { adminApiClient } from "@/services/admin-api/client";
 import { toApiError } from "@/services/api/apiError";
 
 const MAINTENANCE_MODE_KEY = "maintenance_mode";
 const SITE_LOGO_KEY = "site_logo";
+const PUBLIC_NAV_KEY = "public_nav";
 
 function isMaintenanceModeEnabled(settings: ISiteSetting[]): boolean {
   const setting = settings.find((item) => item.key === MAINTENANCE_MODE_KEY);
@@ -27,6 +33,13 @@ function getSiteLogoUrl(settings: ISiteSetting[]): string {
     : DEFAULT_SITE_LOGO_URL;
 }
 
+/** Itens escondidos do menu público; qualquer valor malformado vira "nada escondido". */
+function getHiddenNavItems(settings: ISiteSetting[]): PublicNavItemId[] {
+  const setting = settings.find((item) => item.key === PUBLIC_NAV_KEY);
+  const value = setting?.value as { hidden?: unknown } | undefined;
+  return Array.isArray(value?.hidden) ? value.hidden.filter(isPublicNavItemId) : [];
+}
+
 export function AdminSettingsPage(): ReactElement {
   const { settings, setSettings, isLoading, error: loadError, reload } =
     useAdminSettings();
@@ -37,6 +50,7 @@ export function AdminSettingsPage(): ReactElement {
 
   const maintenanceModeEnabled: boolean = isMaintenanceModeEnabled(settings);
   const siteLogoUrl: string = getSiteLogoUrl(settings);
+  const hiddenNavItems: PublicNavItemId[] = getHiddenNavItems(settings);
 
   async function handleToggleMaintenanceMode(next: boolean): Promise<void> {
     try {
@@ -66,6 +80,42 @@ export function AdminSettingsPage(): ReactElement {
       setError(
         toApiError(caught, "Não foi possível salvar a configuração.").message,
       );
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleToggleNavItem(
+    id: PublicNavItemId,
+    nextVisible: boolean,
+  ): Promise<void> {
+    try {
+      setIsSaving(true);
+      setError("");
+      setSuccessMessage("");
+
+      const nextHidden: PublicNavItemId[] = nextVisible
+        ? hiddenNavItems.filter((item) => item !== id)
+        : [...hiddenNavItems, id];
+
+      const updated: ISiteSetting = await adminApiClient.updateSetting(
+        PUBLIC_NAV_KEY,
+        { hidden: nextHidden },
+      );
+
+      setSettings(
+        settings.some((item) => item.key === PUBLIC_NAV_KEY)
+          ? settings.map((item) => (item.key === PUBLIC_NAV_KEY ? updated : item))
+          : [...settings, updated],
+      );
+
+      setSuccessMessage(
+        nextVisible
+          ? "Item exibido no menu do site."
+          : "Item escondido do menu do site.",
+      );
+    } catch (caught) {
+      setError(toApiError(caught, "Não foi possível salvar o menu.").message);
     } finally {
       setIsSaving(false);
     }
@@ -159,6 +209,12 @@ export function AdminSettingsPage(): ReactElement {
         currentUrl={siteLogoUrl}
         isSaving={isSaving}
         onSave={(next) => void handleSaveSiteLogo(next)}
+      />
+
+      <PublicNavVisibilityCard
+        hidden={hiddenNavItems}
+        isSaving={isSaving}
+        onToggle={(id, nextVisible) => void handleToggleNavItem(id, nextVisible)}
       />
 
       <MaintenanceModeCard

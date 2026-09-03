@@ -1,5 +1,6 @@
 export {
   makeGetPublicMaintenanceModeController,
+  makeGetPublicNavController,
   makeGetPublicSiteLogoController,
   makeGetSettingController,
   makeListSettingsController,

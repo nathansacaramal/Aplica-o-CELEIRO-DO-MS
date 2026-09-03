@@ -7,9 +7,15 @@ import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types"
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
 import {
   DEFAULT_SITE_LOGO_URL,
+  PUBLIC_NAV_KEY,
   type IMaintenanceModeValue,
+  type IPublicNavValue,
   type ISiteLogoValue,
 } from "@/entities/settings/settings.types";
+import {
+  isPublicNavItemId,
+  type PublicNavItemId,
+} from "@/constants/publicNavItems";
 import {
   getBlogPostsMock,
   getCitiesMock,
@@ -275,6 +281,15 @@ export function createInMemoryPublicApiClient(): IPublicApiClient {
         return tb - ta;
       });
       return sorted.slice(0, limit);
+    },
+
+    async getPublicNav(): Promise<IPublicNavValue> {
+      const setting = getSiteSettingsMock().find((item) => item.key === PUBLIC_NAV_KEY);
+      const value = setting?.value as { hidden?: unknown } | undefined;
+      const hidden = Array.isArray(value?.hidden)
+        ? value.hidden.filter((item): item is PublicNavItemId => isPublicNavItemId(item))
+        : [];
+      return { hidden };
     },
 
     async listPublishedBlogPosts(

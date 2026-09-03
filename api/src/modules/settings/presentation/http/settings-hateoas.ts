@@ -38,3 +38,10 @@ export const publicSiteLogoLinks = (): Links => ({
     method: "GET",
   },
 });
+
+export const publicNavLinks = (): Links => ({
+  self: {
+    href: `${API_PUBLIC_PREFIX}/settings/nav`,
+    method: "GET",
+  },
+});

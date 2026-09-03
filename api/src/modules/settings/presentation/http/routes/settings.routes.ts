@@ -6,6 +6,7 @@ import { Router } from "express-serve-static-core";
 import { updateSettingSchema, updateSiteLogoSchema } from "../validators/setting-schemas";
 import {
   makeGetPublicMaintenanceModeController,
+  makeGetPublicNavController,
   makeGetPublicSiteLogoController,
   makeGetSettingController,
   makeListSettingsController,
@@ -51,4 +52,5 @@ export function registerSettingsRoutes(router: Router): void {
     adaptRoute(makeGetPublicMaintenanceModeController()),
   );
   router.get("/public/settings/logo", adaptRoute(makeGetPublicSiteLogoController()));
+  router.get("/public/settings/nav", adaptRoute(makeGetPublicNavController()));
 }

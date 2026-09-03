@@ -11,8 +11,13 @@ import type { IInstitutionalContent } from "@/entities/institutional/institution
 import {
   DEFAULT_SITE_LOGO_URL,
   type IMaintenanceModeValue,
+  type IPublicNavValue,
   type ISiteLogoValue,
 } from "@/entities/settings/settings.types";
+import {
+  isPublicNavItemId,
+  type PublicNavItemId,
+} from "@/constants/publicNavItems";
 import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { ITouristPoint } from "@/entities/tourist-point/touristPoint.types";
 import { mapCityFromApi } from "@/services/api/mappers/cityFromApi";
@@ -397,6 +402,20 @@ export function createHttpPublicApiClient(baseURL: string): IPublicApiClient {
       } catch {
         // A seção "Últimas publicações" nunca deve travar a home.
         return [];
+      }
+    },
+
+    async getPublicNav(): Promise<IPublicNavValue> {
+      try {
+        const { data } = await http.get<unknown>("/public/settings/nav");
+        const raw = unwrapResource<{ hidden?: unknown }>(data);
+        const hidden = Array.isArray(raw.hidden)
+          ? raw.hidden.filter((item): item is PublicNavItemId => isPublicNavItemId(item))
+          : [];
+        return { hidden };
+      } catch {
+        // Falha ao consultar a configuração nunca deve esconder o menu do site.
+        return { hidden: [] };
       }
     },
 

@@ -2,6 +2,7 @@ import { Controller } from "@/core/protocols";
 import { getPublicWebImageUploader } from "@/modules/media/infra/factories/compose-public-web-image-uploader";
 import {
   GetPublicMaintenanceModeUseCase,
+  GetPublicNavUseCase,
   GetPublicSiteLogoUseCase,
   GetSettingUseCase,
   ListSettingsUseCase,
@@ -11,6 +12,7 @@ import {
 import { SequelizeSettingRepository } from "@/modules/settings/infra/sequelize/sequelize-setting.repository";
 import {
   GetPublicMaintenanceModeController,
+  GetPublicNavController,
   GetPublicSiteLogoController,
   GetSettingController,
   ListSettingsController,
@@ -27,6 +29,7 @@ const updateSettingUseCase = new UpdateSettingUseCase(settingRepo);
 const getPublicMaintenanceModeUseCase = new GetPublicMaintenanceModeUseCase(settingRepo);
 const updateSiteLogoUseCase = new UpdateSiteLogoUseCase(settingRepo, settingRepo, images);
 const getPublicSiteLogoUseCase = new GetPublicSiteLogoUseCase(settingRepo);
+const getPublicNavUseCase = new GetPublicNavUseCase(settingRepo);
 
 export function makeListSettingsController(): Controller {
   return new ListSettingsController(listSettingsUseCase);
@@ -50,4 +53,8 @@ export function makeUpdateSiteLogoController(): Controller {
 
 export function makeGetPublicSiteLogoController(): Controller {
   return new GetPublicSiteLogoController(getPublicSiteLogoUseCase);
+}
+
+export function makeGetPublicNavController(): Controller {
+  return new GetPublicNavController(getPublicNavUseCase);
 }

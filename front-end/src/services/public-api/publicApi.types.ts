@@ -7,6 +7,7 @@ import type { ISocialLink } from "@/entities/social-link/socialLink.types";
 import type { IHomeHighlight } from "@/entities/home-content/homeContent.types";
 import type {
   IMaintenanceModeValue,
+  IPublicNavValue,
   ISiteLogoValue,
 } from "@/entities/settings/settings.types";
 
@@ -71,6 +72,9 @@ export interface IPublicApiClient {
 
   /** Nunca lança: em caso de falha, cai na logo estática atual do site. */
   getSiteLogo: () => Promise<ISiteLogoValue>;
+
+  /** Nunca lança: em caso de falha, devolve o menu completo (nada escondido). */
+  getPublicNav: () => Promise<IPublicNavValue>;
 
   /** Seção "Últimas publicações" da home. Nunca lança: em caso de falha, retorna lista vazia. */
   listLatestPublishedBlogPosts: (limit?: number) => Promise<IBlogPost[]>;

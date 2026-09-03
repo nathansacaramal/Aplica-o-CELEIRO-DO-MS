@@ -1,4 +1,5 @@
 import { GetPublicMaintenanceModeController } from "@/modules/settings/presentation/http/controller/get-public-maintenance-mode.controller";
+import { GetPublicNavController } from "@/modules/settings/presentation/http/controller/get-public-nav.controller";
 import { GetPublicSiteLogoController } from "@/modules/settings/presentation/http/controller/get-public-site-logo.controller";
 import { GetSettingController } from "@/modules/settings/presentation/http/controller/get-setting.controller";
 import { ListSettingsController } from "@/modules/settings/presentation/http/controller/list-settings.controller";
@@ -129,6 +130,23 @@ describe("GetPublicSiteLogoController", () => {
     execute.mockResolvedValue({ url: "/celeiro_ms_logo.jpg" });
     const r = await sut.handle({ correlationId: "c" });
     expect(r.statusCode).toBe(200);
+  });
+
+  it("erro inesperado", async () => {
+    execute.mockRejectedValue(new Error("x"));
+    expect((await sut.handle({ correlationId: "c" })).statusCode).not.toBe(200);
+  });
+});
+
+describe("GetPublicNavController", () => {
+  const execute = jest.fn();
+  const sut = new GetPublicNavController({ execute } as never);
+
+  it("200 com o payload do use-case", async () => {
+    execute.mockResolvedValue({ hidden: ["hoteis"] });
+    const r = await sut.handle({ correlationId: "c" });
+    expect(r.statusCode).toBe(200);
+    expect(r.body).toMatchObject({ data: { hidden: ["hoteis"] } });
   });
 
   it("erro inesperado", async () => {

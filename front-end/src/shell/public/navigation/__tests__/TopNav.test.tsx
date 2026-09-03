@@ -1,7 +1,23 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TopNav } from "../TopNav";
+
+const { getPublicNavMock } = vi.hoisted(() => ({
+  getPublicNavMock: vi.fn(),
+}));
+
+vi.mock("@/services/public-api/client", () => ({
+  publicApiClient: {
+    getPublicNav: (...args: unknown[]) => getPublicNavMock(...args),
+    getSiteLogo: vi.fn().mockResolvedValue({ url: "/celeiro_ms_logo.jpg" }),
+  },
+}));
+
+beforeEach(() => {
+  getPublicNavMock.mockReset();
+  getPublicNavMock.mockResolvedValue({ hidden: [] });
+});
 
 describe("TopNav", () => {
   it("deve renderizar a marca do portal", () => {
@@ -65,6 +81,23 @@ describe("TopNav", () => {
     );
 
     expect(screen.getByAltText("Logo do Celeiro do MS")).toBeInTheDocument();
+  });
+
+  it("não deve renderizar itens escondidos nas configurações", async () => {
+    getPublicNavMock.mockResolvedValue({ hidden: ["hoteis", "sobre"] });
+
+    render(
+      <MemoryRouter>
+        <TopNav />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByRole("link", { name: "Hotéis" })).not.toBeInTheDocument();
+    });
+    expect(screen.queryByRole("link", { name: "Sobre" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Eventos" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Blog" })).toBeInTheDocument();
   });
 
   it("deve marcar o link atual conforme a rota", () => {

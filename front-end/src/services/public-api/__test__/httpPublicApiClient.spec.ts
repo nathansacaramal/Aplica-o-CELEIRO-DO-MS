@@ -819,6 +819,37 @@ describe("createHttpPublicApiClient (axios mockado)", () => {
     });
   });
 
+  it("getPublicNav retorna os itens escondidos configurados", async () => {
+    mockGet.mockResolvedValueOnce({ data: resourceBody({ hidden: ["hoteis", "sobre"] }) });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getPublicNav()).toEqual({ hidden: ["hoteis", "sobre"] });
+    expect(mockGet).toHaveBeenCalledWith("/public/settings/nav");
+  });
+
+  it("getPublicNav descarta ids desconhecidos", async () => {
+    mockGet.mockResolvedValueOnce({
+      data: resourceBody({ hidden: ["hoteis", "rota-inexistente", 42] }),
+    });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getPublicNav()).toEqual({ hidden: ["hoteis"] });
+  });
+
+  it("getPublicNav nunca lança: mantém o menu completo quando a requisição falha", async () => {
+    mockGet.mockRejectedValueOnce(new Error("network down"));
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getPublicNav()).toEqual({ hidden: [] });
+  });
+
+  it("getPublicNav mantém o menu completo quando a resposta vem malformada", async () => {
+    mockGet.mockResolvedValueOnce({ data: resourceBody({ hidden: "hoteis" }) });
+
+    const client = createHttpPublicApiClient("https://x/api");
+    expect(await client.getPublicNav()).toEqual({ hidden: [] });
+  });
+
   it("listLatestPublishedBlogPosts busca /public/blog/latest com o limite informado", async () => {
     mockGet.mockResolvedValueOnce({
       data: collectionBody([

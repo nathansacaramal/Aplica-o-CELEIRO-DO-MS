@@ -447,6 +447,12 @@ let siteSettingsMock: ISiteSetting[] = [
     value: { url: "/celeiro_ms_logo.jpg" },
     updatedAt: new Date().toISOString(),
   },
+  {
+    id: 3,
+    key: "public_nav",
+    value: { hidden: [] },
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 export function getSiteSettingsMock(): ISiteSetting[] {
