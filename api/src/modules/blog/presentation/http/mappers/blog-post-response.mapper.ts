@@ -14,6 +14,7 @@ export function toBlogPostHttpPayload(source: BlogPostEntity | BlogPostProps) {
     resumo: p.resumo,
     conteudo: p.conteudo,
     imagemDestaque: p.imagemDestaque,
+    galeria: p.galeria,
     status: p.status,
     dataPublicacao: p.dataPublicacao,
     createdAt: p.createdAt,

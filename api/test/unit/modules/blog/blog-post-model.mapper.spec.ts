@@ -10,6 +10,7 @@ describe("blogPostModelToEntity", () => {
       resumo: "R",
       conteudo: "<p>C</p>",
       imagemDestaque: "https://x.com/i.jpg",
+      galeria: [],
       status: "published",
       dataPublicacao: new Date(),
       createdAt: new Date(),
@@ -28,6 +29,7 @@ describe("blogPostModelToEntity", () => {
       resumo: "R",
       conteudo: "<p>C</p>",
       imagemDestaque: "https://x.com/i.jpg",
+      galeria: [],
       status: "???",
       dataPublicacao: new Date(),
     } as unknown as BlogPostModel;

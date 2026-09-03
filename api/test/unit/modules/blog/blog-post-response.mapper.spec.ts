@@ -9,6 +9,7 @@ describe("toBlogPostHttpPayload", () => {
     resumo: "Resumo",
     conteudo: "<p>Conteúdo</p>",
     imagemDestaque: "https://x.com/i.jpg",
+    galeria: [],
     status: "published" as const,
     dataPublicacao: new Date("2026-01-01"),
     createdAt: new Date("2026-01-02"),

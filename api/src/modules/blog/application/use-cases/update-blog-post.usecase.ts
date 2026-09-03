@@ -6,6 +6,7 @@ import { FindBlogPostByIdRepository } from "../../domain/repositories/find-blog-
 import { UpdateBlogPostRepository } from "../../domain/repositories/update-blog-post.repository";
 import { UpdateBlogPostDTO } from "../dto";
 import { extractExcerptFromHtml } from "../services/extract-excerpt-from-html.service";
+import { resolveGallery } from "../services/resolve-gallery.service";
 import { sanitizeBlogPostHtml } from "../services/sanitize-html.service";
 
 export class UpdateBlogPostUseCase {
@@ -27,8 +28,14 @@ export class UpdateBlogPostUseCase {
       });
     }
 
-    const { image, conteudo, status, ...rest } = dto;
+    const { image, conteudo, status, galeria, ...rest } = dto;
     const payload: Partial<BlogPostProps> = { ...rest };
+
+    // O admin manda sempre a lista final (o que fica + o que entra), então
+    // omitir o campo mantém a galeria atual e mandar [] esvazia de propósito.
+    if (galeria !== undefined) {
+      payload.galeria = await resolveGallery(galeria, this.images);
+    }
 
     if (conteudo !== undefined) {
       const sanitized = sanitizeBlogPostHtml(conteudo);

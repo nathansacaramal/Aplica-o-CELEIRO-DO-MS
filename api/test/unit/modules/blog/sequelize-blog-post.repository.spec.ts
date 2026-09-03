@@ -22,6 +22,7 @@ const row = {
   resumo: "R",
   conteudo: "<p>C</p>",
   imagemDestaque: "https://x.com/e.jpg",
+  galeria: [],
   status: "published",
   dataPublicacao: new Date(),
   createdAt: new Date(),
@@ -36,6 +37,7 @@ const makeEntity = () =>
     resumo: "R",
     conteudo: "<p>C</p>",
     imagemDestaque: "https://x.com/e.jpg",
+    galeria: [],
     status: "published",
     dataPublicacao: new Date(),
   });

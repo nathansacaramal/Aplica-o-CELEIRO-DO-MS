@@ -9,6 +9,7 @@ class BlogPostModel extends Model {
   resumo!: string;
   conteudo!: string;
   imagemDestaque!: string;
+  galeria!: string[] | null;
   status!: string;
   dataPublicacao!: Date;
   createdAt?: Date;
@@ -29,6 +30,9 @@ BlogPostModel.init(
     resumo: { type: DataTypes.TEXT, allowNull: false },
     conteudo: { type: DataTypes.TEXT("long"), allowNull: false },
     imagemDestaque: { type: DataTypes.STRING, allowNull: false },
+    // Nullable: publicações criadas antes da galeria existir seguem com null,
+    // que o mapper normaliza para lista vazia.
+    galeria: { type: DataTypes.JSON, allowNull: true },
     status: { type: DataTypes.STRING, allowNull: false, defaultValue: "draft" },
     dataPublicacao: { type: DataTypes.DATE, allowNull: false },
   },

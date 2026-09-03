@@ -2,6 +2,7 @@ import DOMPurify from "dompurify";
 import { type ReactElement } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { Container, Section, SectionHeader } from "@/design-system/ui";
+import { BlogPostGallery } from "@/domains/catalogo-publico/blog/components/BlogPostGallery";
 import { usePublishedBlogPostBySlug } from "@/domains/catalogo-publico/blog/hooks/usePublishedBlogPostBySlug";
 import { EmptyState } from "@/domains/catalogo-publico/shared/components/EmptyState";
 import { PublicEntityDetailSkeleton } from "@/domains/catalogo-publico/shared/components/PublicEntityDetailSkeleton";
@@ -106,6 +107,12 @@ export function BlogPostDetailsPage(): ReactElement {
           />
         </Container>
       </Section>
+
+      {post.galeria.length > 0 ? (
+        <Section spacing="lg">
+          <BlogPostGallery fotos={post.galeria} tituloPublicacao={post.titulo} />
+        </Section>
+      ) : null}
     </div>
   );
 }

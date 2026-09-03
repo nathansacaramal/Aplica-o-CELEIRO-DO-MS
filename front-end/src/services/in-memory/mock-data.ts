@@ -274,6 +274,7 @@ let blogPostsMock: IBlogPost[] = [
     conteudo:
       "<p>A cidade recebe shows, feira gastronômica e atrações culturais durante todo o fim de semana.</p><p>O evento é gratuito e conta com estrutura completa para toda a família.</p>",
     imagemDestaque: "/images/highlights/festival-gastronomico.jpg",
+    galeria: [],
     status: "published",
     dataPublicacao: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -287,6 +288,7 @@ let blogPostsMock: IBlogPost[] = [
     conteudo:
       "<p>Roteiro reúne pontos históricos e naturais da cidade em um único passeio guiado.</p><ul><li>Parque Antenor Martins</li><li>Centro histórico</li></ul>",
     imagemDestaque: "/images/highlights/parque-antenor-martins.jpg",
+    galeria: [],
     status: "published",
     dataPublicacao: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
@@ -299,6 +301,7 @@ let blogPostsMock: IBlogPost[] = [
     resumo: "Conteúdo ainda não publicado.",
     conteudo: "<p>Conteúdo ainda não publicado.</p>",
     imagemDestaque: "/images/highlights/feira-cultural-itapora.jpg",
+    galeria: [],
     status: "draft",
     dataPublicacao: new Date().toISOString(),
     createdAt: new Date().toISOString(),

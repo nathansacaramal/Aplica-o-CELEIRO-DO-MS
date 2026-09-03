@@ -10,6 +10,7 @@ const makeExisting = () =>
     resumo: "R",
     conteudo: "<p>C</p>",
     imagemDestaque: "https://x.com/i.jpg",
+    galeria: [],
     status: "published",
     dataPublicacao: new Date(),
   });

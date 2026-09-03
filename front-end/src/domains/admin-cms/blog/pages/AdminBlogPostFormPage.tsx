@@ -14,6 +14,7 @@ import type {
   IUpdateBlogPostInput,
   IBlogPost,
 } from "@/entities/blog-post/blogPost.types";
+import { AdminGalleryField } from "@/domains/admin-cms/components/AdminGalleryField";
 import { AdminImageUrlField } from "@/domains/admin-cms/components/AdminImageUrlField";
 import { BlogRichTextEditor } from "@/domains/admin-cms/blog/components/BlogRichTextEditor";
 import { useAdminBlogPostFormSource } from "@/domains/admin-cms/blog/hooks/useAdminBlogPostFormSource";
@@ -33,10 +34,11 @@ interface IBlogPostFormState {
   conteudo: string;
   status: BlogPostStatus;
   imagemDestacadaUrl: string;
+  galeria: string[];
 }
 
 function buildInitialFormState(): IBlogPostFormState {
-  return { titulo: "", conteudo: "", status: "draft", imagemDestacadaUrl: "" };
+  return { titulo: "", conteudo: "", status: "draft", imagemDestacadaUrl: "", galeria: [] };
 }
 
 function mapPostToFormState(post: IBlogPost): IBlogPostFormState {
@@ -45,6 +47,7 @@ function mapPostToFormState(post: IBlogPost): IBlogPostFormState {
     conteudo: post.conteudo,
     status: post.status,
     imagemDestacadaUrl: post.imagemDestaque ?? "",
+    galeria: post.galeria,
   };
 }
 
@@ -118,6 +121,8 @@ export function AdminBlogPostFormPage(): ReactElement {
             formState.imagemDestacadaUrl,
             loadedPost?.imagemDestaque ?? "",
           ),
+          // Sempre a lista final: o backend troca a galeria inteira por esta.
+          galeria: formState.galeria,
         };
 
         await updateAdminBlogPost(input);
@@ -128,6 +133,7 @@ export function AdminBlogPostFormPage(): ReactElement {
           conteudo: formState.conteudo,
           status: formState.status,
           imagemDestacadaUrl: formState.imagemDestacadaUrl.trim(),
+          galeria: formState.galeria,
         };
 
         await createAdminBlogPost(input);
@@ -207,6 +213,16 @@ export function AdminBlogPostFormPage(): ReactElement {
             }
             onChange={(next) => {
               setFormState((s) => ({ ...s, imagemDestacadaUrl: next }));
+              if (successMessage) setSuccessMessage("");
+            }}
+          />
+
+          <AdminGalleryField
+            id="galeria"
+            value={formState.galeria}
+            disabled={isSubmitting}
+            onChange={(next) => {
+              setFormState((s) => ({ ...s, galeria: next }));
               if (successMessage) setSuccessMessage("");
             }}
           />

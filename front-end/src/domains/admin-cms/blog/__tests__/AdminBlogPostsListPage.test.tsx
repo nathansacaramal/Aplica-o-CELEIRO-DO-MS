@@ -23,6 +23,7 @@ function makePost(overrides: Partial<Record<string, unknown>> = {}) {
     resumo: "Resumo",
     conteudo: "<p>C</p>",
     imagemDestaque: "/img.jpg",
+    galeria: [],
     status: "draft" as const,
     dataPublicacao: "2026-01-01T00:00:00.000Z",
     createdAt: "2026-01-01T00:00:00.000Z",

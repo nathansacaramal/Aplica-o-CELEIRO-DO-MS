@@ -8,6 +8,8 @@ export interface BlogPostProps {
   resumo: string;
   conteudo: string;
   imagemDestaque: string;
+  /** URLs das fotos extras (galeria), na ordem definida pelo admin. Sempre uma lista. */
+  galeria: string[];
   status: BlogPostStatus;
   dataPublicacao: Date;
   createdAt?: Date;
@@ -34,6 +36,9 @@ export class BlogPostEntity {
   }
   get imagemDestaque() {
     return this.props.imagemDestaque;
+  }
+  get galeria() {
+    return this.props.galeria;
   }
   get status() {
     return this.props.status;

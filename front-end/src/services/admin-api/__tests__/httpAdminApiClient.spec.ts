@@ -781,6 +781,39 @@ describe("createHttpAdminApiClient", () => {
       expect(body.status).toBe("published");
     });
 
+    it("createBlogPost separa fotos já publicadas de novas na galeria", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.post.mockResolvedValue({ data: resourceBody(blogPostRow(1)) });
+
+      await client.createBlogPost({
+        titulo: "T",
+        conteudo: "<p>C</p>",
+        status: "draft",
+        imagemDestacadaUrl: "data:image/jpeg;base64,xx",
+        galeria: ["https://cdn/ja-publicada.jpg", "data:image/jpeg;base64,novafoto"],
+      });
+
+      const body = mockHandles.post.mock.calls[0]?.[1] as Record<string, unknown>;
+      expect(body.galeria).toEqual([
+        { url: "https://cdn/ja-publicada.jpg" },
+        { image: expect.objectContaining({ mimeType: "image/jpeg" }) },
+      ]);
+    });
+
+    it("updateBlogPost envia a galeria como lista final e omite quando não informada", async () => {
+      const client = createHttpAdminApiClient("https://bff.test/");
+      mockHandles.patch.mockResolvedValue({ data: resourceBody(blogPostRow(1)) });
+
+      await client.updateBlogPost({ id: 1, galeria: [] });
+      expect((mockHandles.patch.mock.calls[0]?.[1] as Record<string, unknown>).galeria).toEqual([]);
+
+      mockHandles.patch.mockClear();
+      await client.updateBlogPost({ id: 1, titulo: "N" });
+      expect(
+        (mockHandles.patch.mock.calls[0]?.[1] as Record<string, unknown>).galeria,
+      ).toBeUndefined();
+    });
+
     it("deleteBlogPost chama DELETE", async () => {
       const client = createHttpAdminApiClient("https://bff.test/");
       mockHandles.del.mockResolvedValue({ data: {} });

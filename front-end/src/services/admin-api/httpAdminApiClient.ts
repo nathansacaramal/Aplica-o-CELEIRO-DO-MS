@@ -60,10 +60,41 @@ import {
 } from "./adminHttpSessionBridge";
 import { refreshAdminAccessTokenSingleFlight } from "./adminAccessTokenRefreshCoordinator";
 import { notifyAdminAuthForbidden } from "./adminAuthEvents";
-import { resolveWebImagePayloadFromImageUrlField } from "./adminWebImage";
+import {
+  resolveWebImagePayloadFromImageUrlField,
+  type IWebImagePayload,
+} from "./adminWebImage";
 
 function trimBaseUrl(baseURL: string): string {
   return baseURL.replace(/\/+$/, "");
+}
+
+/**
+ * Galeria do blog: a lista chega com as fotos já publicadas (http/https) e as
+ * novas escolhidas agora (data URL). As já publicadas seguem como `url` — não
+ * dá para rebaixá-las a base64 porque o browser nem sempre consegue buscá-las
+ * de volta (CORS) — e só as novas viram payload de upload.
+ */
+async function resolveGalleryPayload(
+  items: string[],
+): Promise<Array<{ url: string } | { image: IWebImagePayload }>> {
+  const resolved: Array<{ url: string } | { image: IWebImagePayload }> = [];
+
+  for (const item of items) {
+    const value = item.trim();
+    if (value === "") {
+      continue;
+    }
+    if (/^https?:\/\//i.test(value)) {
+      resolved.push({ url: value });
+      continue;
+    }
+    resolved.push({
+      image: await resolveWebImagePayloadFromImageUrlField(value, "Foto da galeria"),
+    });
+  }
+
+  return resolved;
 }
 
 /** Query params comuns para listagens admin em modo "pick" (eventos, pontos turísticos, etc.). */
@@ -489,19 +520,23 @@ export function createHttpAdminApiClient(baseURL: string): IAdminApiClient {
         conteudo: input.conteudo,
         status: input.status,
         ...(input.dataPublicacao !== undefined && { dataPublicacao: input.dataPublicacao }),
+        ...(input.galeria !== undefined && { galeria: await resolveGalleryPayload(input.galeria) }),
         image,
       });
       return mapBlogPostFromApi(unwrapResource<Record<string, unknown>>(data));
     },
 
     async updateBlogPost(input: IUpdateBlogPostInput): Promise<IBlogPost> {
-      const { id, imagemDestacadaUrl, ...rest } = input;
+      const { id, imagemDestacadaUrl, galeria, ...rest } = input;
       const body: Record<string, unknown> = { ...rest };
       if (imagemDestacadaUrl !== undefined && imagemDestacadaUrl.trim() !== "") {
         body.image = await resolveWebImagePayloadFromImageUrlField(
           imagemDestacadaUrl,
           "Imagem de destaque da publicação",
         );
+      }
+      if (galeria !== undefined) {
+        body.galeria = await resolveGalleryPayload(galeria);
       }
       const { data } = await http.patch<unknown>(`/admin/blog/${id}`, body);
       return mapBlogPostFromApi(unwrapResource<Record<string, unknown>>(data));

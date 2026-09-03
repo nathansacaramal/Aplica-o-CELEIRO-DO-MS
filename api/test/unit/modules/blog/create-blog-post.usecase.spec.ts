@@ -22,6 +22,7 @@ const persisted = new BlogPostEntity({
   resumo: "Texto",
   conteudo: "<p>Texto</p>",
   imagemDestaque: "https://cdn.example/post.png",
+  galeria: [],
   status: "published",
   dataPublicacao: new Date(),
 });
@@ -67,6 +68,29 @@ describe("CreateBlogPostUseCase", () => {
     const arg = create.mock.calls[0]![0] as BlogPostEntity;
     expect(arg.props.status).toBe("draft");
     expect(arg.props.dataPublicacao).toBeInstanceOf(Date);
+  });
+
+  it("cria com galeria vazia quando o campo não é enviado", async () => {
+    const { sut, create } = makeSut();
+
+    await sut.execute(dto);
+
+    const arg = create.mock.calls[0]![0] as BlogPostEntity;
+    expect(arg.props.galeria).toEqual([]);
+  });
+
+  it("envia as fotos da galeria e guarda as URLs na ordem recebida", async () => {
+    const { sut, create, images } = makeSut();
+    (images.uploadPublicWebImage as jest.Mock)
+      .mockResolvedValueOnce({ url: "https://cdn.example/post.png" })
+      .mockResolvedValueOnce({ url: "https://cdn.example/g1.jpg" })
+      .mockResolvedValueOnce({ url: "https://cdn.example/g2.jpg" });
+
+    const foto = { base64: tinyPngB64, mimeType: "image/png" as const };
+    await sut.execute({ ...dto, galeria: [{ image: foto }, { image: foto }] });
+
+    const arg = create.mock.calls[0]![0] as BlogPostEntity;
+    expect(arg.props.galeria).toEqual(["https://cdn.example/g1.jpg", "https://cdn.example/g2.jpg"]);
   });
 
   it("respeita dataPublicacao explícita quando informada", async () => {

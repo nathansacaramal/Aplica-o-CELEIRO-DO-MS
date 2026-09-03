@@ -19,6 +19,7 @@ function makePost(id: number, titulo: string) {
     resumo: `Resumo ${id}`,
     conteudo: `<p>Conteúdo ${id}</p>`,
     imagemDestaque: "/images/post.jpg",
+    galeria: [],
     status: "published" as const,
     dataPublicacao: new Date().toISOString(),
     createdAt: new Date().toISOString(),

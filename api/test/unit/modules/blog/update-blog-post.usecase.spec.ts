@@ -16,6 +16,7 @@ const makeExisting = (overrides: Partial<BlogPostEntity["props"]> = {}) =>
     resumo: "R",
     conteudo: "<p>C</p>",
     imagemDestaque: "https://cdn/old.jpg",
+    galeria: [],
     status: "draft",
     dataPublicacao: new Date("2026-01-01"),
     ...overrides,
@@ -96,6 +97,37 @@ describe("UpdateBlogPostUseCase", () => {
     expect(updateRepo.update).toHaveBeenCalledWith(
       3,
       expect.objectContaining({ imagemDestaque: "https://cdn/new.jpg" }),
+    );
+  });
+
+  it("mantém a galeria atual quando o campo é omitido", async () => {
+    const { sut, updateRepo } = makeSut(makeExisting({ galeria: ["https://cdn/foto.jpg"] }));
+
+    await sut.execute(3, { titulo: "X" });
+
+    const call = (updateRepo.update as jest.Mock).mock.calls[0]![1];
+    expect(call.galeria).toBeUndefined();
+  });
+
+  it("esvazia a galeria quando o admin envia lista vazia", async () => {
+    const { sut, updateRepo } = makeSut(makeExisting({ galeria: ["https://cdn/foto.jpg"] }));
+
+    await sut.execute(3, { galeria: [] });
+
+    expect(updateRepo.update).toHaveBeenCalledWith(3, expect.objectContaining({ galeria: [] }));
+  });
+
+  it("envia fotos novas da galeria e preserva as mantidas", async () => {
+    const { sut, updateRepo, images } = makeSut(makeExisting());
+    (images.uploadPublicWebImage as jest.Mock).mockResolvedValue({ url: "https://cdn/nova.jpg" });
+    const image = { base64: tinyPngB64, mimeType: "image/png" as const };
+
+    await sut.execute(3, { galeria: [{ url: "https://cdn/mantida.jpg" }, { image }] });
+
+    expect(images.uploadPublicWebImage).toHaveBeenCalledWith(image, "blog");
+    expect(updateRepo.update).toHaveBeenCalledWith(
+      3,
+      expect.objectContaining({ galeria: ["https://cdn/mantida.jpg", "https://cdn/nova.jpg"] }),
     );
   });
 

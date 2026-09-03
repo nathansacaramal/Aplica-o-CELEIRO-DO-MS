@@ -443,6 +443,7 @@ export function createInMemoryAdminApiClient(): IAdminApiClient {
         resumo,
         conteudo: input.conteudo,
         imagemDestaque: input.imagemDestacadaUrl.trim(),
+        galeria: (input.galeria ?? []).map((item) => item.trim()).filter((item) => item !== ""),
         status: input.status,
         dataPublicacao: input.dataPublicacao ?? now,
         createdAt: now,
@@ -483,6 +484,10 @@ export function createInMemoryAdminApiClient(): IAdminApiClient {
           : (input.dataPublicacao ?? currentItem.dataPublicacao),
         imagemDestaque:
           input.imagemDestacadaUrl?.trim() ? input.imagemDestacadaUrl.trim() : currentItem.imagemDestaque,
+        galeria:
+          input.galeria !== undefined
+            ? input.galeria.map((item) => item.trim()).filter((item) => item !== "")
+            : currentItem.galeria,
         updatedAt: new Date().toISOString(),
       };
 

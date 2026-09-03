@@ -29,6 +29,7 @@ export type ListBlogPostsResult = {
     resumo: string;
     conteudo: string;
     imagemDestaque: string;
+    galeria: string[];
     status: BlogPostStatus;
     dataPublicacao: Date;
     createdAt?: Date;

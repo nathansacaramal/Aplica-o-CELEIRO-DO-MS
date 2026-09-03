@@ -47,6 +47,7 @@ describe("BlogPostDetailsPage", () => {
       resumo: "Resumo do festival.",
       conteudo: "<p>Texto completo</p><script>alert(1)</script>",
       imagemDestaque: "/images/festival.jpg",
+      galeria: [],
       status: "published",
       dataPublicacao: "2026-01-01T00:00:00.000Z",
       createdAt: "2026-01-01T00:00:00.000Z",

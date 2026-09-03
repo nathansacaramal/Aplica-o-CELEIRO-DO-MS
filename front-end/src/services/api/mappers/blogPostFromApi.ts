@@ -13,6 +13,9 @@ export function mapBlogPostFromApi(raw: Record<string, unknown>): IBlogPost {
     resumo: String(raw.resumo ?? ""),
     conteudo: String(raw.conteudo ?? ""),
     imagemDestaque: raw.imagemDestaque !== undefined ? String(raw.imagemDestaque) : undefined,
+    galeria: Array.isArray(raw.galeria)
+      ? raw.galeria.filter((item): item is string => typeof item === "string" && item.trim() !== "")
+      : [],
     status: toBlogPostStatus(raw.status),
     dataPublicacao:
       raw.dataPublicacao !== undefined ? toIsoDate(raw.dataPublicacao, "") : undefined,

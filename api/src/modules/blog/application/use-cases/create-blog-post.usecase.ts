@@ -5,6 +5,7 @@ import { CreateBlogPostRepository } from "../../domain/repositories/create-blog-
 import { CreateBlogPostDTO } from "../dto";
 import { extractExcerptFromHtml } from "../services/extract-excerpt-from-html.service";
 import { GenerateUniqueBlogSlugService } from "../services/generate-unique-blog-slug.service";
+import { resolveGallery } from "../services/resolve-gallery.service";
 import { sanitizeBlogPostHtml } from "../services/sanitize-html.service";
 
 export class CreateBlogPostUseCase {
@@ -25,6 +26,7 @@ export class CreateBlogPostUseCase {
     const dataPublicacao = dto.dataPublicacao ?? new Date();
 
     const { url: imagemDestaque } = await this.images.uploadPublicWebImage(dto.image, "blog");
+    const galeria = await resolveGallery(dto.galeria ?? [], this.images);
 
     const entity = new BlogPostEntity({
       id: 0,
@@ -33,6 +35,7 @@ export class CreateBlogPostUseCase {
       resumo,
       conteudo,
       imagemDestaque,
+      galeria,
       status,
       dataPublicacao,
     });
